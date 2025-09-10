@@ -13,19 +13,14 @@ h1{margin:8px 0 4px;font-size:26px;letter-spacing:.5px}
 .time{color:var(--sub)}
 
 .controls{
-  max-width:1080px;margin:0 auto 16px;padding:0 16px;display:flex;gap:10px;flex-wrap:wrap
+  max-width:1080px;margin:0 auto 16px;padding:0 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center
 }
 select,input[type="search"]{
   padding:9px 12px;border-radius:10px;border:1px solid var(--line);outline:none;min-width:180px;background:#fff
 }
 input[type="search"]{flex:1 1 280px}
-/* 右侧按钮容器 */
-.controls .right{ margin-left:auto; display:flex; gap:10px; align-items:center }
-.btn{
-  padding:9px 14px;border-radius:10px;border:1px solid var(--line);
-  background:#fff; cursor:pointer; font:14px/1 system-ui; color:var(--fg)
-}
-.btn:hover{ border-color:var(--accent); color:var(--accent) }
+#openTrends{padding:9px 12px;border-radius:10px;border:1px solid var(--accent);background:#fff;color:var(--accent);cursor:pointer}
+#openTrends:hover{background:#f0fffa}
 
 main{max-width:1080px;margin:0 auto;padding:0 16px 40px}
 
@@ -67,32 +62,23 @@ footer{
   max-width:1080px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px
 }
 
-/* ===== Trends 模块样式 ===== */
-.modal{ position:fixed; inset:0; background:rgba(0,0,0,.38); display:flex;
-  align-items:center; justify-content:center; z-index:9999 }
-.modal.hidden{ display:none }
-.modal .panel{
-  width:min(1120px,calc(100vw - 32px)); max-height:90vh; overflow:auto;
-  background:#fff; border-radius:16px; padding:16px; box-shadow:0 12px 30px rgba(0,0,0,.2)
+/* --- 趋势图弹窗样式 --- */
+#trendsMask{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none}
+#trendsModal{
+  position:fixed;inset:6vh 4vw;background:#fff;border-radius:14px;display:none;
+  padding:16px;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,.25)
 }
-.modal .panel header{
-  display:flex; align-items:center; justify-content:space-between; margin-bottom:8px
-}
-.modal .panel h3{ margin:0; font-size:18px }
-.modal .close{ background:transparent;border:0;cursor:pointer;font-size:22px;line-height:1 }
-.trends-grid{
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(360px,1fr)); gap:14px
-}
-.trends-card{
-  background:var(--card); border-radius:12px; padding:10px; border:1px solid rgba(0,0,0,.06)
-}
-.trends-card h4{ margin:0 0 8px; font-size:14px; color:var(--sub) }
-.trends-slot{ height:320px }
+#trendsModal h3{margin:8px 0 10px}
+.trends-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.trends-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px}
+.trends-card iframe{width:100%;height:320px;border:0}
+#trendsClose{position:sticky;top:0;float:right;border:0;background:#fff;font-size:20px;cursor:pointer}
 
 /* 小屏优化 */
 @media (max-width:480px){
   h1{font-size:22px}
   h2{font-size:18px}
+  .trends-grid{grid-template-columns:1fr}
 }
 </style>
 
@@ -107,10 +93,7 @@ footer{
     <option value="一、市场与企业动态">一、市场与企业动态</option><option value="二、产品与技术创新">二、产品与技术创新</option><option value="三、投融资与资本市场">三、投融资与资本市场</option><option value="四、应用与落地案例">四、应用与落地案例</option><option value="五、政策与监管动向">五、政策与监管动向</option><option value="六、行业趋势与观察">六、行业趋势与观察</option><option value="七、国际动态">七、国际动态</option>
   </select>
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
-
-  <div class="right">
-    <button id="btnTrends" class="btn" type="button">趋势图</button>
-  </div>
+  <button id="openTrends" title="查看 Google 趋势（近 7 天）">Google 趋势</button>
 </div>
 
 <main id="main">
@@ -131,6 +114,20 @@ footer{
     
     <p class="recap">概要：The next generation of Arm's CPUs, used in phones from Samsung and others, feature higher AI performance than last year's.</p>
     <div class="more"><a href="https://www.cnet.com/tech/mobile/the-top-android-phones-of-2026-could-get-better-ai-with-arms-new-cpus/#ftag=CAD590a51e" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="https://www.tmtpost.com/7689005.html" target="_blank" rel="noopener">Nano Banana爆火背后，深聊谷歌多模态五大主线布局</a></h3>
+    <div class="meta">（2025-09-10）</div>
+    <div class="tags">#多模态</div>
+    <p class="recap">概要：谷歌正在试图重夺AI赛道主导权</p>
+    <div class="more"><a href="https://www.tmtpost.com/7689005.html" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="https://www.tmtpost.com/7689101.html" target="_blank" rel="noopener">China's AI Chip Market Darling Cambricon Faces Its Ultimate Test</a></h3>
+    <div class="meta">（2025-09-10）</div>
+    <div class="tags">#百度 #华为 #强化学习</div>
+    <p class="recap">概要：Cambricon, China's leading AI chipmaker, has seen its stock skyrocket over 468% in the past year, briefly surpassing Moutai to become the top company on China's A-share market.</p>
+    <div class="more"><a href="https://www.tmtpost.com/7689101.html" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
     </div>
   </section>\n<section id="二、产品与技术创新">
@@ -172,18 +169,32 @@ footer{
     <div class="more"><a href="https://www.theverge.com/tech/772748/iphone-17-pro-air-preorder-price-how-to-buy-release-date" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.engadget.com/wearables/apple-watch-series-11-hands-on-feels-and-looks-the-same-but-real-changes-are-deeper-200438367.html?src=rss" target="_blank" rel="noopener">Apple Watch Series 11 hands-on: Feels and looks the same, but real changes are deeper</a></h3>
+    <div class="meta">（2025-09-10）</div>
+    <div class="tags">#Apple #微调训练 #强化学习 #评测Benchmark #办公效率</div>
+    <p class="recap">概要：Though the Apple Watch announcements may have paled in comparison to the iPhone news at Apple's &quot;Awe dropping&quot; event today, there were still some noteworthy updates to the smartwatch lineup…</p>
+    <div class="more"><a href="https://www.engadget.com/wearables/apple-watch-series-11-hands-on-feels-and-looks-the-same-but-real-changes-are-deeper-200438367.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.engadget.com/mobile/smartphones/iphone-17-pro-hands-on-the-unibody-and-camera-plateau-feel-more-significant-in-person-185553855.html?src=rss" target="_blank" rel="noopener">iPhone 17 Pro hands-on: The unibody and camera plateau feel more significant in person</a></h3>
+    <div class="meta">（2025-09-10）</div>
+    <div class="tags">#Apple #微调训练 #强化学习 #办公效率</div>
+    <p class="recap">概要：Surprising absolutely no one, Apple has unveiled the new iPhone 17 series, including the iPhone Air, which CEO Tim Cook said at the launch event today freed the company up to make the Pro…</p>
+    <div class="more"><a href="https://www.engadget.com/mobile/smartphones/iphone-17-pro-hands-on-the-unibody-and-camera-plateau-feel-more-significant-in-person-185553855.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.engadget.com/computing/laptops/best-laptops-for-gaming-and-school-132207352.html?src=rss" target="_blank" rel="noopener">The best laptops for gaming and schoolwork in 2025</a></h3>
+    <div class="meta">（2025-09-10）</div>
+    <div class="tags">#Google #Microsoft #强化学习 #算力 #办公效率</div>
+    <p class="recap">概要：Finding a laptop that balances work and play can feel tricky, but the best gaming laptops are built to handle more than fast frame rates.</p>
+    <div class="more"><a href="https://www.engadget.com/computing/laptops/best-laptops-for-gaming-and-school-132207352.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
     <h3><a href="https://www.engadget.com/mobile/smartphones/engadget-podcast-making-sense-of-apples-iphone-17-event-012707428.html?src=rss" target="_blank" rel="noopener">Engadget Podcast: Making sense of Apple's iPhone 17 event</a></h3>
     <div class="meta">（2025-09-10）</div>
     <div class="tags">#Google #Apple #LLM</div>
     <p class="recap">概要：We've survived Apple's iPhone 17 event and we're here to dive into all of the news.</p>
     <div class="more"><a href="https://www.engadget.com/mobile/smartphones/engadget-podcast-making-sense-of-apples-iphone-17-event-012707428.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.engadget.com/wearables/apple-watch-series-11-hands-on-feels-and-looks-the-same-but-real-changes-are-deeper-200438367.html?src=rss" target="_blank" rel="noopener">Apple Watch Series 11 hands-on: Feels and looks the same, but real changes are deeper</a></h3>
-    <div class="meta">（2025-09-10）</div>
-    <div class="tags">#Apple #微调训练 #强化学习 #办公效率</div>
-    <p class="recap">概要：Though the Apple Watch announcements may have paled in comparison to the iPhone news at Apple's event today, there were still some noteworthy updates to the smartwatch lineup to talk about.…</p>
-    <div class="more"><a href="https://www.engadget.com/wearables/apple-watch-series-11-hands-on-feels-and-looks-the-same-but-real-changes-are-deeper-200438367.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="二、产品与技术创新">
     <h3><a href="https://www.engadget.com/mobile/smartphones/iphone-air-vs-iphone-17-pro-which-one-is-right-for-you-001538431.html?src=rss" target="_blank" rel="noopener">iPhone Air vs. iPhone 17 Pro: Which one is right for you?</a></h3>
@@ -256,13 +267,6 @@ footer{
     <div class="more"><a href="https://www.engadget.com/mobile/smartphones/the-iphone-air-is-apples-thinnest-phone-yet-174342422.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://36kr.com/newsflashes/3460385274926473?f=rss" target="_blank" rel="noopener">微软Office 365将接入Anthropic AI技术，不再依赖OpenAI</a></h3>
-    <div class="meta">（2025-09-10）</div>
-    <div class="tags">#OpenAI #Anthropic #应用落地 #办公效率</div>
-    <p class="recap">概要：据报道，知情人士透露，微软将在Office 365套件中引入Anthropic的AI技术。此举意味着，Anthropic的技术将与OpenAI的技术一同为Word、Excel、Outlook和PowerPoint等应用的新功能提供支持，这一举措标志着微软在办公软件领域对ChatGPT开发商OpenAI的独家依赖局面正式终结。</p>
-    <div class="more"><a href="https://36kr.com/newsflashes/3460385274926473?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
     <h3><a href="http://www.geekpark.net/news/353725" target="_blank" rel="noopener">500 块的「电子宠物」，治好了我的「路怒症」｜New Things</a></h3>
     <div class="meta">（2025-09-10）</div>
     <div class="tags">#推理加速 #安全对齐 #应用落地 #搜索与助手 #教育 #汽车出行 #机器人</div>
@@ -297,20 +301,6 @@ footer{
     <p class="recap">概要：IT之家 9 月 10 日消息，Arm 今日正式公布了 C1 CPU IP 和 Mali G1 GPU IP 的完整阵容。IT之家注意到 Arm 在新一代 xPU IP 上取消了传统的数字代号，而是以后缀在同代产品中区分具体等级。</p>
     <div class="more"><a href="https://www.ithome.com/0/881/790.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.ithome.com/0/881/763.htm" target="_blank" rel="noopener">大众点评宣布“重启”品质外卖，美团 C 端 AI 智能体服务将于一周内发布</a></h3>
-    <div class="meta">（2025-09-10）</div>
-    <div class="tags">#OpenAI #NVIDIA #HuggingFace #应用落地 #搜索与助手</div>
-    <p class="recap">概要：IT之家 9 月 10 日消息，美团今日在其微信公众号宣布，即日起大众点评将正式“重启”品质外卖服务。此外，美团 C 端 AI 智能体服务将于一周内发布，目前正在“封楼测试”阶段。 美团表示，首批已集合超百万家高分堂食店，基于大量用户真实到店评价，未来还将根据顾客真实评分、商家真实运营情况不断邀请更多新餐厅加入。</p>
-    <div class="more"><a href="https://www.ithome.com/0/881/763.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.ithome.com/0/881/753.htm" target="_blank" rel="noopener">英伟达 Rubin CPX GPU 包含 192 个重复单元，预计采用 512bit 显存位宽</a></h3>
-    <div class="meta">（2025-09-10）</div>
-    <div class="tags">#算力</div>
-    <p class="recap">概要：IT之家 9 月 10 日消息，英伟达美国当地时间 9 日发布了面向大规模上下文推理处理和视频生成 AI 应用的 Rubin CPX GPU。该 GPU 基于 &quot;Rubin&quot; 架构构建但与此前已公布的 Rubin Tensor Core GPU 又有不少区别之处。</p>
-    <div class="more"><a href="https://www.ithome.com/0/881/753.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
     </div>
   </section>\n<section id="三、投融资与资本市场">
     <h2>三、投融资与资本市场</h2>
@@ -321,13 +311,6 @@ footer{
     <div class="tags">#阿里 #字节跳动 #Agent #微调训练 #推理加速 #投融资 #商业动态</div>
     <p class="recap">概要：文｜周鑫雨 编辑｜苏建勋 《智能涌现》独家获悉，近日，AI视频生成公司「爱诗科技」完成B轮融资，总金额超过6000万美元。 该轮融资由阿里巴巴领投，达晨财智、深创投、北京市AI基金、湖南电广、巨人网络和Antler跟投。据了解，这也是国内视频生成领域单次最大融资额。</p>
     <div class="more"><a href="https://36kr.com/p/3459728637302151?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="三、投融资与资本市场">
-    <h3><a href="https://www.tmtpost.com/7688509.html" target="_blank" rel="noopener">寒武纪：5000亿市值与50亿营收背后的国产AI芯片博弈</a></h3>
-    <div class="meta">（2025-09-10）</div>
-    <div class="tags">#投融资</div>
-    <p class="recap">概要：寒武纪太稀缺了</p>
-    <div class="more"><a href="https://www.tmtpost.com/7688509.html" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
     </div>
   </section>\n\n<section id="五、政策与监管动向">
@@ -393,39 +376,43 @@ footer{
     <p class="recap">概要：Today's Apple event wasn't just about iPhones and smartwatches. The company also announced the long-anticipated refresh of the AirPods Pro earbuds.</p>
     <div class="more"><a href="https://www.engadget.com/audio/headphones/airpods-pro-3-offer-live-translation-and-improved-noise-cancellation-171018061.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
+<article class="card" data-sec="七、国际动态">
+    <h3><a href="https://36kr.com/newsflashes/3460562911073928?f=rss" target="_blank" rel="noopener">OpenAI称希望在AI基础设施领域与SK海力士及三星加强合作</a></h3>
+    <div class="meta">（2025-09-10）</div>
+    <div class="tags">#OpenAI #商业动态</div>
+    <p class="recap">概要：OpenAI周三表示，正在寻求扩大与SK海力士、三星电子等韩国科技企业的合作伙伴关系，以打造人工智能（AI）基础设施。OpenAI首席战略官杰森·权（Jason Kwon）在首尔举行的记者招待会上表示：“我认为，在物理数据中心建设层面，有很多与OpenAI合作的方式。”（新浪财经）</p>
+    <div class="more"><a href="https://36kr.com/newsflashes/3460562911073928?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
     </div>
   </section>
 </main>
 
-<!-- Trends Modal：四张趋势图 -->
-<div id="trendsModal" class="modal hidden" aria-hidden="true">
-  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="trendsTitle">
-    <header>
-      <h3 id="trendsTitle">Google 趋势（近 7 天）</h3>
-      <button class="close" id="closeTrends" aria-label="关闭">×</button>
-    </header>
-    <div class="trends-grid">
-      <div class="trends-card">
-        <h4>国外模型</h4>
-        <div id="t-foreign" class="trends-slot"></div>
-      </div>
-      <div class="trends-card">
-        <h4>国内模型</h4>
-        <div id="t-domestic" class="trends-slot"></div>
-      </div>
-      <div class="trends-card">
-        <h4>市场大盘</h4>
-        <div id="t-market" class="trends-slot"></div>
-      </div>
-      <div class="trends-card">
-        <h4>厂商</h4>
-        <div id="t-vendors" class="trends-slot"></div>
-      </div>
+<footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
+
+<!-- 趋势图弹窗 -->
+<div id="trendsMask"></div>
+<div id="trendsModal" role="dialog" aria-modal="true" aria-label="Google 趋势（近 7 天）">
+  <button id="trendsClose" aria-label="关闭">✕</button>
+  <h2 style="margin:0 0 12px">Google 趋势（近 7 天）</h2>
+  <div class="trends-grid">
+    <div class="trends-card">
+      <h3>国外模型</h3>
+      <iframe src="https://trends.google.com/trends/embed/explore/TIMESERIES?hl=zh-CN&tz=-480&date=today%207-d&geo=US&q=ChatGPT,Gemini,Claude,Llama,Grok" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <div class="trends-card">
+      <h3>国内模型</h3>
+      <iframe src="https://trends.google.com/trends/embed/explore/TIMESERIES?hl=zh-CN&tz=-480&date=today%207-d&geo=CN&q=DeepSeek,Ernie,Hunyuan,Qwen,Doubao" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <div class="trends-card">
+      <h3>市场大盘</h3>
+      <iframe src="https://trends.google.com/trends/embed/explore/TIMESERIES?hl=zh-CN&tz=-480&date=today%207-d&geo=US&q=Generative%20AI,Large%20Language%20Model,AI%20Cloud,AI%20Platform,AI%20Infrastructure" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <div class="trends-card">
+      <h3>厂商</h3>
+      <iframe src="https://trends.google.com/trends/embed/explore/TIMESERIES?hl=zh-CN&tz=-480&date=today%207-d&geo=CN&q=Volcengine,Tencent%20Cloud,Huawei%20Cloud,Baidu%20AI%20Cloud,Alibaba%20Cloud" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
   </div>
 </div>
-
-<footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
 
 <script>
 const secSel  = document.getElementById('secSel');
@@ -483,74 +470,18 @@ const run = debounce(filter, 180);
 secSel.addEventListener('change', filter);
 search.addEventListener('input', run);
 
+/* --- 趋势图弹窗 --- */
+const openBtn = document.getElementById('openTrends');
+const mask = document.getElementById('trendsMask');
+const modal = document.getElementById('trendsModal');
+const closeBtn = document.getElementById('trendsClose');
+function openTrends(){ mask.style.display='block'; modal.style.display='block'; }
+function closeTrends(){ mask.style.display='none'; modal.style.display='none'; }
+openBtn.addEventListener('click', openTrends);
+mask.addEventListener('click', closeTrends);
+closeBtn.addEventListener('click', closeTrends);
+window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeTrends(); });
+
 /* --- 首次渲染 --- */
 filter();
-
-/* ====== 趋势图弹窗（懒加载 Google Trends）====== */
-(function TrendsModal(){
-  const SCRIPT_SRC = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
-  const modal   = document.getElementById('trendsModal');
-  const openBtn = document.getElementById('btnTrends');
-  const closeBtn= document.getElementById('closeTrends');
-  let initialized = false;
-
-  // 统一使用「近 7 天」
-  const TIME_7D = 'now 7-d';
-
-  // 地区：国外/市场 US；国内/厂商 CN
-  const TRENDS = {
-    foreignModels: { geo:'US', keywords:['ChatGPT','Gemini','Claude','LLaMA','Grok'] },
-    domesticModels:{ geo:'CN', keywords:['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
-    market:        { geo:'US', keywords:['Generative AI','Large Language Model','AI Cloud','AI Platform','AI Infrastructure'] },
-    vendors:       { geo:'CN', keywords:['Volcengine','Tencent Cloud','Huawei Cloud','Baidu AI Cloud','Alibaba Cloud'] }
-  };
-
-  function ensureScript(cb){
-    if (window.trends && window.trends.embed) return cb();
-    const s = document.createElement('script');
-    s.src = SCRIPT_SRC; s.async = true; s.onload = cb;
-    document.head.appendChild(s);
-  }
-
-  function render(elId, {geo, keywords}, time=TIME_7D){
-    try{
-      const el = document.getElementById(elId);
-      if (!el) return;
-      const comparisonItem = keywords.map(k => ({ keyword:k, geo:geo||'', time }));
-      const query = 'date=' + encodeURIComponent(time) + '&q=' + encodeURIComponent(keywords.join(',')) + (geo?('&geo='+geo):'');
-      trends.embed.renderExploreWidgetTo(
-        el,
-        'TIMESERIES',
-        { comparisonItem, category:0, property:'' },
-        { exploreQuery: query, guestPath:'https://trends.google.com:443/trends/embed/' }
-      );
-    }catch(e){ console.error('trends render error', e); }
-  }
-
-  function initTrends(){
-    if (initialized) return;
-    ensureScript(function(){
-      render('t-foreign',  TRENDS.foreignModels, TIME_7D);
-      render('t-domestic', TRENDS.domesticModels, TIME_7D);
-      render('t-market',   TRENDS.market,       TIME_7D);
-      render('t-vendors',  TRENDS.vendors,      TIME_7D);
-      initialized = true;
-    });
-  }
-
-  function open(){
-    modal.classList.remove('hidden');
-    modal.setAttribute('aria-hidden','false');
-    initTrends();
-  }
-  function close(){
-    modal.classList.add('hidden');
-    modal.setAttribute('aria-hidden','true');
-  }
-
-  openBtn?.addEventListener('click', open);
-  closeBtn?.addEventListener('click', close);
-  modal?.addEventListener('click', (e)=>{ if (e.target === modal) close(); });
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !modal.classList.contains('hidden')) close(); });
-})();
 </script>
