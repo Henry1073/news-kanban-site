@@ -13,14 +13,19 @@ h1{margin:8px 0 4px;font-size:26px;letter-spacing:.5px}
 .time{color:var(--sub)}
 
 .controls{
-  max-width:1080px;margin:0 auto 16px;padding:0 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center
+  max-width:1080px;margin:0 auto 16px;padding:0 16px;display:flex;gap:10px;flex-wrap:wrap
 }
 select,input[type="search"]{
   padding:9px 12px;border-radius:10px;border:1px solid var(--line);outline:none;min-width:180px;background:#fff
 }
 input[type="search"]{flex:1 1 280px}
-#openTrends{padding:9px 12px;border-radius:10px;border:1px solid var(--accent);background:#fff;color:var(--accent);cursor:pointer}
-#openTrends:hover{background:#f0fffa}
+/* 右侧按钮容器 */
+.controls .right{ margin-left:auto; display:flex; gap:10px; align-items:center }
+.btn{
+  padding:9px 14px;border-radius:10px;border:1px solid var(--line);
+  background:#fff; cursor:pointer; font:14px/1 system-ui; color:var(--fg)
+}
+.btn:hover{ border-color:var(--accent); color:var(--accent) }
 
 main{max-width:1080px;margin:0 auto;padding:0 16px 40px}
 
@@ -62,23 +67,32 @@ footer{
   max-width:1080px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px
 }
 
-/* --- 趋势图弹窗样式 --- */
-#trendsMask{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none}
-#trendsModal{
-  position:fixed;inset:6vh 4vw;background:#fff;border-radius:14px;display:none;
-  padding:16px;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,.25)
+/* ===== Trends 模块样式 ===== */
+.modal{ position:fixed; inset:0; background:rgba(0,0,0,.38); display:flex;
+  align-items:center; justify-content:center; z-index:9999 }
+.modal.hidden{ display:none }
+.modal .panel{
+  width:min(1120px,calc(100vw - 32px)); max-height:90vh; overflow:auto;
+  background:#fff; border-radius:16px; padding:16px; box-shadow:0 12px 30px rgba(0,0,0,.2)
 }
-#trendsModal h3{margin:8px 0 10px}
-.trends-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.trends-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px}
-.trends-card iframe{width:100%;height:320px;border:0}
-#trendsClose{position:sticky;top:0;float:right;border:0;background:#fff;font-size:20px;cursor:pointer}
+.modal .panel header{
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:8px
+}
+.modal .panel h3{ margin:0; font-size:18px }
+.modal .close{ background:transparent;border:0;cursor:pointer;font-size:22px;line-height:1 }
+.trends-grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(360px,1fr)); gap:14px
+}
+.trends-card{
+  background:var(--card); border-radius:12px; padding:10px; border:1px solid rgba(0,0,0,.06)
+}
+.trends-card h4{ margin:0 0 8px; font-size:14px; color:var(--sub) }
+.trends-slot{ height:320px }
 
 /* 小屏优化 */
 @media (max-width:480px){
   h1{font-size:22px}
   h2{font-size:18px}
-  .trends-grid{grid-template-columns:1fr}
 }
 </style>
 
@@ -93,7 +107,10 @@ footer{
     <option value="一、市场与企业动态">一、市场与企业动态</option><option value="二、产品与技术创新">二、产品与技术创新</option><option value="三、投融资与资本市场">三、投融资与资本市场</option><option value="四、应用与落地案例">四、应用与落地案例</option><option value="五、政策与监管动向">五、政策与监管动向</option><option value="六、行业趋势与观察">六、行业趋势与观察</option><option value="七、国际动态">七、国际动态</option>
   </select>
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
-  <button id="openTrends" title="查看 Google 趋势（近 7 天）">Google 趋势</button>
+
+  <div class="right">
+    <button id="btnTrends" class="btn" type="button">趋势图</button>
+  </div>
 </div>
 
 <main id="main">
@@ -380,32 +397,35 @@ footer{
   </section>
 </main>
 
-<footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
-
-<!-- 趋势图弹窗 -->
-<div id="trendsMask"></div>
-<div id="trendsModal" role="dialog" aria-modal="true" aria-label="Google 趋势（近 7 天）">
-  <button id="trendsClose" aria-label="关闭">✕</button>
-  <h2 style="margin:0 0 12px">Google 趋势（近 7 天）</h2>
-  <div class="trends-grid">
-    <div class="trends-card">
-      <h3>国外模型</h3>
-      <iframe src="https://trends.google.com/trends/embed/explore/TIMESERIES?hl=zh-CN&tz=-480&date=today%207-d&geo=US&q=ChatGPT,Gemini,Claude,Llama,Grok" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-    <div class="trends-card">
-      <h3>国内模型</h3>
-      <iframe src="https://trends.google.com/trends/embed/explore/TIMESERIES?hl=zh-CN&tz=-480&date=today%207-d&geo=CN&q=DeepSeek,Ernie,Hunyuan,Qwen,Doubao" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-    <div class="trends-card">
-      <h3>市场大盘</h3>
-      <iframe src="https://trends.google.com/trends/embed/explore/TIMESERIES?hl=zh-CN&tz=-480&date=today%207-d&geo=US&q=Generative%20AI,Large%20Language%20Model,AI%20Cloud,AI%20Platform,AI%20Infrastructure" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-    <div class="trends-card">
-      <h3>厂商</h3>
-      <iframe src="https://trends.google.com/trends/embed/explore/TIMESERIES?hl=zh-CN&tz=-480&date=today%207-d&geo=CN&q=Volcengine,Tencent%20Cloud,Huawei%20Cloud,Baidu%20AI%20Cloud,Alibaba%20Cloud" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<!-- Trends Modal：四张趋势图 -->
+<div id="trendsModal" class="modal hidden" aria-hidden="true">
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="trendsTitle">
+    <header>
+      <h3 id="trendsTitle">Google 趋势（近 7 天）</h3>
+      <button class="close" id="closeTrends" aria-label="关闭">×</button>
+    </header>
+    <div class="trends-grid">
+      <div class="trends-card">
+        <h4>国外模型</h4>
+        <div id="t-foreign" class="trends-slot"></div>
+      </div>
+      <div class="trends-card">
+        <h4>国内模型</h4>
+        <div id="t-domestic" class="trends-slot"></div>
+      </div>
+      <div class="trends-card">
+        <h4>市场大盘</h4>
+        <div id="t-market" class="trends-slot"></div>
+      </div>
+      <div class="trends-card">
+        <h4>厂商</h4>
+        <div id="t-vendors" class="trends-slot"></div>
+      </div>
     </div>
   </div>
 </div>
+
+<footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
 
 <script>
 const secSel  = document.getElementById('secSel');
@@ -463,18 +483,74 @@ const run = debounce(filter, 180);
 secSel.addEventListener('change', filter);
 search.addEventListener('input', run);
 
-/* --- 趋势图弹窗 --- */
-const openBtn = document.getElementById('openTrends');
-const mask = document.getElementById('trendsMask');
-const modal = document.getElementById('trendsModal');
-const closeBtn = document.getElementById('trendsClose');
-function openTrends(){ mask.style.display='block'; modal.style.display='block'; }
-function closeTrends(){ mask.style.display='none'; modal.style.display='none'; }
-openBtn.addEventListener('click', openTrends);
-mask.addEventListener('click', closeTrends);
-closeBtn.addEventListener('click', closeTrends);
-window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeTrends(); });
-
 /* --- 首次渲染 --- */
 filter();
+
+/* ====== 趋势图弹窗（懒加载 Google Trends）====== */
+(function TrendsModal(){
+  const SCRIPT_SRC = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
+  const modal   = document.getElementById('trendsModal');
+  const openBtn = document.getElementById('btnTrends');
+  const closeBtn= document.getElementById('closeTrends');
+  let initialized = false;
+
+  // 统一使用「近 7 天」
+  const TIME_7D = 'now 7-d';
+
+  // 地区：国外/市场 US；国内/厂商 CN
+  const TRENDS = {
+    foreignModels: { geo:'US', keywords:['ChatGPT','Gemini','Claude','LLaMA','Grok'] },
+    domesticModels:{ geo:'CN', keywords:['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
+    market:        { geo:'US', keywords:['Generative AI','Large Language Model','AI Cloud','AI Platform','AI Infrastructure'] },
+    vendors:       { geo:'CN', keywords:['Volcengine','Tencent Cloud','Huawei Cloud','Baidu AI Cloud','Alibaba Cloud'] }
+  };
+
+  function ensureScript(cb){
+    if (window.trends && window.trends.embed) return cb();
+    const s = document.createElement('script');
+    s.src = SCRIPT_SRC; s.async = true; s.onload = cb;
+    document.head.appendChild(s);
+  }
+
+  function render(elId, {geo, keywords}, time=TIME_7D){
+    try{
+      const el = document.getElementById(elId);
+      if (!el) return;
+      const comparisonItem = keywords.map(k => ({ keyword:k, geo:geo||'', time }));
+      const query = 'date=' + encodeURIComponent(time) + '&q=' + encodeURIComponent(keywords.join(',')) + (geo?('&geo='+geo):'');
+      trends.embed.renderExploreWidgetTo(
+        el,
+        'TIMESERIES',
+        { comparisonItem, category:0, property:'' },
+        { exploreQuery: query, guestPath:'https://trends.google.com:443/trends/embed/' }
+      );
+    }catch(e){ console.error('trends render error', e); }
+  }
+
+  function initTrends(){
+    if (initialized) return;
+    ensureScript(function(){
+      render('t-foreign',  TRENDS.foreignModels, TIME_7D);
+      render('t-domestic', TRENDS.domesticModels, TIME_7D);
+      render('t-market',   TRENDS.market,       TIME_7D);
+      render('t-vendors',  TRENDS.vendors,      TIME_7D);
+      initialized = true;
+    });
+  }
+
+  function open(){
+    modal.classList.remove('hidden');
+    modal.setAttribute('aria-hidden','false');
+    initTrends();
+  }
+  function close(){
+    modal.classList.add('hidden');
+    modal.setAttribute('aria-hidden','true');
+  }
+
+  openBtn?.addEventListener('click', open);
+  closeBtn?.addEventListener('click', close);
+  modal?.addEventListener('click', (e)=>{ if (e.target === modal) close(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !modal.classList.contains('hidden')) close(); });
+})();
 </script>
