@@ -19,6 +19,13 @@ select,input[type="search"]{
   padding:9px 12px;border-radius:10px;border:1px solid var(--line);outline:none;min-width:180px;background:#fff
 }
 input[type="search"]{flex:1 1 280px}
+/* 右侧按钮容器 */
+.controls .right{ margin-left:auto; display:flex; gap:10px; align-items:center }
+.btn{
+  padding:9px 14px;border-radius:10px;border:1px solid var(--line);
+  background:#fff; cursor:pointer; font:14px/1 system-ui; color:var(--fg)
+}
+.btn:hover{ border-color:var(--accent); color:var(--accent) }
 
 main{max-width:1080px;margin:0 auto;padding:0 16px 40px}
 
@@ -60,6 +67,28 @@ footer{
   max-width:1080px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px
 }
 
+/* ===== Trends 模块样式 ===== */
+.modal{ position:fixed; inset:0; background:rgba(0,0,0,.38); display:flex;
+  align-items:center; justify-content:center; z-index:9999 }
+.modal.hidden{ display:none }
+.modal .panel{
+  width:min(1120px,calc(100vw - 32px)); max-height:90vh; overflow:auto;
+  background:#fff; border-radius:16px; padding:16px; box-shadow:0 12px 30px rgba(0,0,0,.2)
+}
+.modal .panel header{
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:8px
+}
+.modal .panel h3{ margin:0; font-size:18px }
+.modal .close{ background:transparent;border:0;cursor:pointer;font-size:22px;line-height:1 }
+.trends-grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(360px,1fr)); gap:14px
+}
+.trends-card{
+  background:var(--card); border-radius:12px; padding:10px; border:1px solid rgba(0,0,0,.06)
+}
+.trends-card h4{ margin:0 0 8px; font-size:14px; color:var(--sub) }
+.trends-slot{ height:320px }
+
 /* 小屏优化 */
 @media (max-width:480px){
   h1{font-size:22px}
@@ -78,6 +107,10 @@ footer{
     <option value="一、市场与企业动态">一、市场与企业动态</option><option value="二、产品与技术创新">二、产品与技术创新</option><option value="三、投融资与资本市场">三、投融资与资本市场</option><option value="四、应用与落地案例">四、应用与落地案例</option><option value="五、政策与监管动向">五、政策与监管动向</option><option value="六、行业趋势与观察">六、行业趋势与观察</option><option value="七、国际动态">七、国际动态</option>
   </select>
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
+
+  <div class="right">
+    <button id="btnTrends" class="btn" type="button">趋势图</button>
+  </div>
 </div>
 
 <main id="main">
@@ -364,6 +397,34 @@ footer{
   </section>
 </main>
 
+<!-- Trends Modal：四张趋势图 -->
+<div id="trendsModal" class="modal hidden" aria-hidden="true">
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="trendsTitle">
+    <header>
+      <h3 id="trendsTitle">Google 趋势</h3>
+      <button class="close" id="closeTrends" aria-label="关闭">×</button>
+    </header>
+    <div class="trends-grid">
+      <div class="trends-card">
+        <h4>国外模型（ChatGPT / Gemini / Claude / LLaMA / Grok）</h4>
+        <div id="t-foreign" class="trends-slot"></div>
+      </div>
+      <div class="trends-card">
+        <h4>国内模型（DeepSeek / Ernie / Hunyuan / Qwen / Doubao）</h4>
+        <div id="t-domestic" class="trends-slot"></div>
+      </div>
+      <div class="trends-card">
+        <h4>市场大盘（Generative AI / LLM / AI Cloud / AI Platform / AI Infrastructure）</h4>
+        <div id="t-market" class="trends-slot"></div>
+      </div>
+      <div class="trends-card">
+        <h4>厂商（Volcengine / Tencent Cloud / Huawei Cloud / Baidu AI Cloud / Alibaba Cloud）</h4>
+        <div id="t-vendors" class="trends-slot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
 
 <script>
@@ -424,4 +485,69 @@ search.addEventListener('input', run);
 
 /* --- 首次渲染 --- */
 filter();
+
+/* ====== 趋势图弹窗（懒加载 Google Trends）====== */
+(function TrendsModal(){
+  const SCRIPT_SRC = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
+  const modal   = document.getElementById('trendsModal');
+  const openBtn = document.getElementById('btnTrends');
+  const closeBtn= document.getElementById('closeTrends');
+  let initialized = false;
+
+  // 四组关键词配置
+  const TRENDS = {
+    foreignModels: { geo:'',   keywords:['ChatGPT','Gemini','Claude','LLaMA','Grok'] },
+    domesticModels:{ geo:'CN', keywords:['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
+    market:        { geo:'',   keywords:['Generative AI','Large Language Model','AI Cloud','AI Platform','AI Infrastructure'] },
+    vendors:       { geo:'CN', keywords:['Volcengine','Tencent Cloud','Huawei Cloud','Baidu AI Cloud','Alibaba Cloud'] }
+  };
+
+  function ensureScript(cb){
+    if (window.trends && window.trends.embed) return cb();
+    const s = document.createElement('script');
+    s.src = SCRIPT_SRC; s.async = true; s.onload = cb;
+    document.head.appendChild(s);
+  }
+
+  function render(elId, {geo, keywords}, time='today 12-m'){
+    try{
+      const el = document.getElementById(elId);
+      if (!el) return;
+      const comparisonItem = keywords.map(k => ({ keyword:k, geo:geo||'', time }));
+      const query = 'date=' + encodeURIComponent(time) + '&q=' + encodeURIComponent(keywords.join(',')) + (geo?('&geo='+geo):'');
+      trends.embed.renderExploreWidgetTo(
+        el,
+        'TIMESERIES',
+        { comparisonItem, category:0, property:'' },
+        { exploreQuery: query, guestPath:'https://trends.google.com:443/trends/embed/' }
+      );
+    }catch(e){ console.error('trends render error', e); }
+  }
+
+  function initTrends(){
+    if (initialized) return;
+    ensureScript(function(){
+      render('t-foreign',  TRENDS.foreignModels);
+      render('t-domestic', TRENDS.domesticModels, 'today 12-m');
+      render('t-market',   TRENDS.market);
+      render('t-vendors',  TRENDS.vendors, 'today 12-m');
+      initialized = true;
+    });
+  }
+
+  function open(){
+    modal.classList.remove('hidden');
+    modal.setAttribute('aria-hidden','false');
+    initTrends();
+  }
+  function close(){
+    modal.classList.add('hidden');
+    modal.setAttribute('aria-hidden','true');
+  }
+
+  openBtn?.addEventListener('click', open);
+  closeBtn?.addEventListener('click', close);
+  modal?.addEventListener('click', (e)=>{ if (e.target === modal) close(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !modal.classList.contains('hidden')) close(); });
+})();
 </script>
