@@ -16,10 +16,10 @@ select,input[type="search"]{padding:9px 12px;border-radius:10px;border:1px solid
 input[type="search"]{flex:1 1 280px}
 
 /* 两栏布局：左新闻 + 右趋势 */
-.wrap{max-width:1200px;margin:0 auto;padding:0 16px 40px}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:18px}
 @media (max-width: 1024px){ .layout{grid-template-columns:1fr;} .sidebar{position:static} }
-.sidebar{position:sticky; top:16px; align-self:start}
+.sidebar{position:sticky; top:12px; align-self:start}
 
 /* 板块与卡片 */
 h2{ margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);padding-left:8px }
@@ -44,10 +44,11 @@ section{scroll-margin-top:70px}
 .hidden{display:none!important}
 footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-/* 右侧趋势卡片（占位容器，无 iframe） */
-.t-card{ background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; margin-bottom:14px; }
+/* 右侧趋势卡片 */
+.t-card{ background:var(--card); border:1px solid var(--line); border-radius:16px;
+  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; margin-bottom:14px; }
 .t-hd{ padding:10px 14px; font-weight:600; border-bottom:1px solid var(--line) }
-.t-body{ height:220px; position:relative; }
+.t-body{ height:320px; position:relative; }   /* ⬅️ 高度改大 */
 .t-fallback{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#9aa0a6; font-size:12px; }
 
 /* 小屏优化 */
@@ -319,7 +320,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   </section>
     </main>
 
-    <!-- 右侧：趋势侧栏（近一周 · 纵列四图 · 官方 embed_loader 渲染） -->
+    <!-- 右侧：趋势侧栏 -->
     <aside class="sidebar" aria-label="Google 趋势（近一周）">
       <div class="t-card">
         <div class="t-hd">国外大模型 · 近一周</div>
@@ -344,7 +345,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
 <footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
 
 <script>
-/* ===== 筛选逻辑（与原版一致） ===== */
+/* ===== 筛选逻辑 ===== */
 const secSel  = document.getElementById('secSel');
 const search  = document.getElementById('search');
 const emptyEl = document.getElementById('emptyHint');
@@ -392,28 +393,35 @@ secSel.addEventListener('change', filter);
 search.addEventListener('input', run);
 filter();
 
-/* ===== Google Trends 稳定加载（官方 embed_loader.js，不走 API） ===== */
+/* ===== Google Trends 官方 embed_loader.js ===== */
 (function mountTrends(){
   const SCRIPT = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
-  const TIME   = 'now 7-d'; // ✅ 过去7天必须是 now 7-d
+  const TIME   = 'now 7-d';
   const cfg = {
-    foreign:  { el: 'gt-foreign',  geo: '',   kw: ['ChatGPT','Gemini','Claude','Grok','Llama'] }, // 全球
+    foreign:  { el: 'gt-foreign',  geo: '',   kw: ['ChatGPT','Gemini','Claude','Grok','Llama'] },
     domestic: { el: 'gt-domestic', geo: 'CN', kw: ['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
     vendors:  { el: 'gt-vendors',  geo: 'CN', kw: ['Baidu AI Cloud','Huawei Cloud','Tencent Cloud','Alibaba Cloud','Volcengine'] },
-    market:   { el: 'gt-market',   geo: '',   kw: ['LLM','AI Agent','RAG','Vector Database','Prompt Engineering'] } // 全球
+    market:   { el: 'gt-market',   geo: '',   kw: ['LLM','AI Agent','RAG','Vector Database','Prompt Engineering'] }
   };
 
   function renderOne({ el, geo, kw }){
     try{
-      const host = 'https://trends.google.com/trends/embed/'; // ✅ 不要加 :443
+      const host = 'https://trends.google.com/trends/embed/';
+      const container = document.getElementById(el);
+      if (!container) return;
+
+      // 清掉占位符，避免“加载趋势图…”残留
+      container.innerHTML = '';
+
       const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time: TIME }));
       const query = 'date=' + encodeURIComponent(TIME)
                   + '&q=' + encodeURIComponent(kw.join(','))
                   + (geo ? '&geo=' + geo : '');
+
       trends.embed.renderExploreWidgetTo(
-        document.getElementById(el),
+        container,
         'TIMESERIES',
-        { comparisonItem, category: 0, property: '' }, // ✅ 所有类别 + 网页搜索
+        { comparisonItem, category: 0, property: '' },
         { exploreQuery: query, guestPath: host }
       );
     }catch(e){
@@ -435,7 +443,6 @@ filter();
   s.src = SCRIPT; s.async = true; s.onload = boot;
   document.head.appendChild(s);
 
-  // 兜底：5s 内脚本没加载到 → 给出提示
   setTimeout(() => {
     if (!(window.trends && window.trends.embed)) {
       ['gt-foreign','gt-domestic','gt-vendors','gt-market'].forEach(id => {
