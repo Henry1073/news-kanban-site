@@ -3,34 +3,50 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI 大模型新闻看板（2025-09-11）</title>
 <style>
-:root{ --fg:#111; --sub:#666; --bg:#f7f7f8; --card:#fff; --line:#e8e8ee; --accent:#0a7; }
+:root{
+  --fg:#111; --sub:#666; --bg:#f7f7f8; --card:#fff; --line:#e8e8ee; --accent:#0a7;
+}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,PingFang SC,Arial}
-
-/* 顶部与筛选条 */
-.header-wrap{max-width:1200px;margin:24px auto 8px;padding:0 16px}
+header{max-width:1080px;margin:24px auto 8px;padding:0 16px}
 h1{margin:8px 0 4px;font-size:26px;letter-spacing:.5px}
 .time{color:var(--sub)}
-.controls{max-width:1200px;margin:0 auto 16px;padding:0 16px;display:flex;gap:10px;flex-wrap:wrap}
-select,input[type="search"]{padding:9px 12px;border-radius:10px;border:1px solid var(--line);outline:none;min-width:180px;background:#fff}
+
+.controls{
+  max-width:1080px;margin:0 auto 16px;padding:0 16px;display:flex;gap:10px;flex-wrap:wrap
+}
+select,input[type="search"]{
+  padding:9px 12px;border-radius:10px;border:1px solid var(--line);outline:none;min-width:180px;background:#fff
+}
 input[type="search"]{flex:1 1 280px}
+/* 右侧按钮容器 */
+.controls .right{ margin-left:auto; display:flex; gap:10px; align-items:center }
+.btn{
+  padding:9px 14px;border-radius:10px;border:1px solid var(--line);
+  background:#fff; cursor:pointer; font:14px/1 system-ui; color:var(--fg)
+}
+.btn:hover{ border-color:var(--accent); color:var(--accent) }
 
-/* 两栏布局：左新闻 + 右趋势 */
-.wrap{max-width:1200px;margin:0 auto;padding:0 12px 40px}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:18px}
-@media (max-width: 1024px){ .layout{grid-template-columns:1fr;} .sidebar{position:static} }
-.sidebar{position:sticky; top:12px; align-self:start}
+main{max-width:1080px;margin:0 auto;padding:0 16px 40px}
 
-/* 板块与卡片 */
-h2{ margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);padding-left:8px }
-.grid{ display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px }
+h2{
+  margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);padding-left:8px
+}
+
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px
+}
+
 .card{
   background:var(--card);border-radius:14px;padding:14px 14px 12px;
   box-shadow:0 1px 3px rgba(0,0,0,.04),0 6px 14px rgba(0,0,0,.05);
   border:1px solid rgba(0,0,0,.02);
   transition:transform .12s ease, box-shadow .12s ease
 }
-.card:hover{ transform:translateY(-2px); box-shadow:0 2px 6px rgba(0,0,0,.06),0 10px 18px rgba(0,0,0,.08) }
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 2px 6px rgba(0,0,0,.06),0 10px 18px rgba(0,0,0,.08)
+}
 .card h3{margin:0 0 6px;font-size:16px}
 .card h3 a{text-decoration:none;color:var(--fg)}
 .card h3 a:hover{color:var(--accent)}
@@ -39,17 +55,39 @@ h2{ margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);paddin
 .recap{margin:.35em 0}
 .more{margin-top:8px}
 .more a{color:var(--accent);text-decoration:none}
-section{scroll-margin-top:70px}
-#emptyHint{ color:var(--sub);text-align:center;margin:20px 0 26px;font-size:14px }
-.hidden{display:none!important}
-footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-/* 右侧趋势卡片 */
-.t-card{ background:var(--card); border:1px solid var(--line); border-radius:16px;
-  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; margin-bottom:14px; }
-.t-hd{ padding:10px 14px; font-weight:600; border-bottom:1px solid var(--line) }
-.t-body{ height:320px; position:relative; }   /* ⬅️ 高度改大 */
-.t-fallback{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#9aa0a6; font-size:12px; }
+section{scroll-margin-top:70px}
+
+#emptyHint{
+  color:var(--sub);text-align:center;margin:20px 0 26px;font-size:14px
+}
+.hidden{display:none!important}
+
+footer{
+  max-width:1080px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px
+}
+
+/* ===== Trends 模块样式 ===== */
+.modal{ position:fixed; inset:0; background:rgba(0,0,0,.38); display:flex;
+  align-items:center; justify-content:center; z-index:9999 }
+.modal.hidden{ display:none }
+.modal .panel{
+  width:min(1120px,calc(100vw - 32px)); max-height:90vh; overflow:auto;
+  background:#fff; border-radius:16px; padding:16px; box-shadow:0 12px 30px rgba(0,0,0,.2)
+}
+.modal .panel header{
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:8px
+}
+.modal .panel h3{ margin:0; font-size:18px }
+.modal .close{ background:transparent;border:0;cursor:pointer;font-size:22px;line-height:1 }
+.trends-grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(360px,1fr)); gap:14px
+}
+.trends-card{
+  background:var(--card); border-radius:12px; padding:10px; border:1px solid rgba(0,0,0,.06)
+}
+.trends-card h4{ margin:0 0 8px; font-size:14px; color:var(--sub) }
+.trends-slot{ height:320px }
 
 /* 小屏优化 */
 @media (max-width:480px){
@@ -58,10 +96,10 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
 }
 </style>
 
-<div class="header-wrap">
+<header>
   <h1>AI 大模型新闻看板</h1>
   <div class="time">2025-09-11</div>
-</div>
+</header>
 
 <div class="controls">
   <select id="secSel" aria-label="板块筛选">
@@ -69,17 +107,32 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <option value="一、市场与企业动态">一、市场与企业动态</option><option value="二、产品与技术创新">二、产品与技术创新</option><option value="三、投融资与资本市场">三、投融资与资本市场</option><option value="四、应用与落地案例">四、应用与落地案例</option><option value="五、政策与监管动向">五、政策与监管动向</option><option value="六、行业趋势与观察">六、行业趋势与观察</option><option value="七、国际动态">七、国际动态</option>
   </select>
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
+
+  <div class="right">
+    <button id="btnTrends" class="btn" type="button">趋势图</button>
+  </div>
 </div>
 
-<div class="wrap">
-  <div class="layout">
-    <!-- 左侧：新闻主栏 -->
-    <main id="main">
-      <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
-      <section id="一、市场与企业动态">
+<main id="main">
+  <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
+  <section id="一、市场与企业动态">
     <h2>一、市场与企业动态</h2>
     <div class="grid">
       <article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="https://www.theverge.com/ai-artificial-intelligence/776130/senator-ted-cruz-ai-sandbox-bill" target="_blank" rel="noopener">Ted Cruz’s new bill would let AI companies set their own rules for up to 10 years</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#Intel</div>
+    <p class="recap">概要：On Wednesday, Sen.</p>
+    <div class="more"><a href="https://www.theverge.com/ai-artificial-intelligence/776130/senator-ted-cruz-ai-sandbox-bill" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="https://www.cnet.com/tech/services-and-software/these-are-the-catchiest-songs-of-all-time-according-to-ai-do-you-agree/#ftag=CAD590a51e" target="_blank" rel="noopener">These Are the Catchiest Songs of All Time, According to AI. Do You Agree?</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#强化学习</div>
+    <p class="recap">概要：Human DJs and AI chatbots agree: The Spice Girls are what dancers want, what they really, really want.</p>
+    <div class="more"><a href="https://www.cnet.com/tech/services-and-software/these-are-the-catchiest-songs-of-all-time-according-to-ai-do-you-agree/#ftag=CAD590a51e" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
     <h3><a href="https://www.tmtpost.com/7689980.html" target="_blank" rel="noopener">可灵VS即梦：初探“多模态”</a></h3>
     <div class="meta">（2025-09-11）</div>
     <div class="tags">#多模态 #内容与营销</div>
@@ -91,6 +144,69 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <h2>二、产品与技术创新</h2>
     <div class="grid">
       <article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.theverge.com/news/776079/charlie-kirk-shooting" target="_blank" rel="noopener">Charlie Kirk fatally shot at Turning Point USA event in Utah</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#RAG #强化学习</div>
+    <p class="recap">概要：Charlie Kirk, the influencer and activist who co-founded right-wing group Turning Point USA, has died at the age of 31 after being shot while speaking at an event at Utah Valley University,…</p>
+    <div class="more"><a href="https://www.theverge.com/news/776079/charlie-kirk-shooting" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.theverge.com/news/776187/charlie-kirk-shooting-videos-platforms-meta-youtube" target="_blank" rel="noopener">How platforms are responding to the Charlie Kirk shooting</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#Meta #RAG #强化学习 #办公效率</div>
+    <p class="recap">概要：Horrifying videos of influencer and right-wing activist Charlie Kirk being fatally shot were widely available on social media platforms.</p>
+    <div class="more"><a href="https://www.theverge.com/news/776187/charlie-kirk-shooting-videos-platforms-meta-youtube" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.theverge.com/ai-artificial-intelligence/776170/oracle-openai-300-billion-contract-project-stargate" target="_blank" rel="noopener">OpenAI reportedly signs $300 billion Project Stargate cloud deal with Oracle</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#OpenAI #语音 #强化学习 #推理加速 #办公效率</div>
+    <p class="recap">概要：OpenAI and Oracle signed a deal “to purchase $300 billion in computing power over roughly five years,” one of the largest cloud computing deals ever, reports the Wall Street Journal. In…</p>
+    <div class="more"><a href="https://www.theverge.com/ai-artificial-intelligence/776170/oracle-openai-300-billion-contract-project-stargate" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.theverge.com/23639378/best-ipad-apple-buy-model-price" target="_blank" rel="noopener">The best iPad to buy</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#AWS #Apple #Intel #RAG #微调训练 #强化学习 #算力</div>
+    <p class="recap">概要：The iPad is still the best tablet on the market. | Image: Cath Virginia / The Verge There are no bad iPads.</p>
+    <div class="more"><a href="https://www.theverge.com/23639378/best-ipad-apple-buy-model-price" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.engadget.com/deals/best-vpn-deals-120056041.html?src=rss" target="_blank" rel="noopener">The best VPN deals: Get up to 87 percent off ExpressVPN, ProtonVPN, Surfshark and others</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#RAG #微调训练 #强化学习 #办公效率</div>
+    <p class="recap">概要：You can save a lot of money with a virtual private network (VPN), whether you're changing virtual locations to get more content out of one streaming service or searching around the world…</p>
+    <div class="more"><a href="https://www.engadget.com/deals/best-vpn-deals-120056041.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.engadget.com/audio/headphones/a-closer-look-at-the-airpods-pro-3-anc-live-translation-and-heart-rate-tracking-193956229.html?src=rss" target="_blank" rel="noopener">A closer look at the AirPods Pro 3: ANC, Live Translation and heart-rate tracking</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#Google #AWS #Apple #RAG #微调训练 #强化学习 #办公效率</div>
+    <p class="recap">概要：The AirPods Pro 3 are a big upgrade over the AirPods Pro 2.</p>
+    <div class="more"><a href="https://www.engadget.com/audio/headphones/a-closer-look-at-the-airpods-pro-3-anc-live-translation-and-heart-rate-tracking-193956229.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.engadget.com/ai/reddit-yahoo-medium-and-more-are-adopting-a-new-licensing-standard-to-get-compensated-for-ai-scraping-180946671.html?src=rss" target="_blank" rel="noopener">Reddit, Yahoo, Medium and more are adopting a new licensing standard to get compensated for AI scraping</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#OpenAI #Anthropic #Google #RAG #微调训练 #推理加速 #办公效率</div>
+    <p class="recap">概要：With web publishers in crisis, a new open standard lets them set the ground rules for AI scrapers.</p>
+    <div class="more"><a href="https://www.engadget.com/ai/reddit-yahoo-medium-and-more-are-adopting-a-new-licensing-standard-to-get-compensated-for-ai-scraping-180946671.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.engadget.com/grammarlys-ai-writing-assistance-tools-now-work-in-five-new-languages-180432231.html?src=rss" target="_blank" rel="noopener">Grammarly's AI writing assistance tools now work in five new languages</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#RAG #微调训练 #强化学习</div>
+    <p class="recap">概要：Since its debut in 2009, Grammarly has only been available in one language: English.</p>
+    <div class="more"><a href="https://www.engadget.com/grammarlys-ai-writing-assistance-tools-now-work-in-five-new-languages-180432231.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.engadget.com/mobile/smartphones/center-stage-is-a-better-vision-of-the-apple-intelligence-era-160428405.html?src=rss" target="_blank" rel="noopener">Center Stage is a better vision of the Apple Intelligence era</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#Apple #Intel #RAG #微调训练 #强化学习 #办公效率</div>
+    <p class="recap">概要：Apple has offered a few different variations of Center Stage — its photo tracking and enhancement suit — over the years, but with the iPhone 17 line and iPhone Air the company has designed…</p>
+    <div class="more"><a href="https://www.engadget.com/mobile/smartphones/center-stage-is-a-better-vision-of-the-apple-intelligence-era-160428405.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
     <h3><a href="https://36kr.com/p/3461734743102857?f=rss" target="_blank" rel="noopener">社交倦怠的年轻人，遇见有「活人感」的AI</a></h3>
     <div class="meta">（2025-09-11）</div>
     <div class="tags">#字节跳动 #DeepSeek #算力 #应用落地 #教育 #内容与营销</div>
@@ -132,13 +248,6 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <p class="recap">概要：IT之家 9 月 11 日消息，消息源 @heyitsyogesh 昨日（9 月 10 日）在 X 平台发布推文，分享了小米 16 手机的规格，包括 6.3 英寸 LTPO OLED 屏幕，后置三摄均为 5000 万像素，搭载高通骁龙 8 Elite Gen 5 芯片。</p>
     <div class="more"><a href="https://www.ithome.com/0/882/092.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.ithome.com/0/882/048.htm" target="_blank" rel="noopener">苹果 iPhone 17 Pro / Max GPU 跑分曝光：A19 Pro 较 A18 Pro 最多提升 40.83%</a></h3>
-    <div class="meta">（2025-09-11）</div>
-    <div class="tags">#Meta #Apple #算力 #内容与营销</div>
-    <p class="recap">概要：IT之家 9 月 11 日消息，科技媒体 MacRumors 昨日（9 月 10 日）发布博文，报道称继 CPU 跑分曝光之后，苹果 iPhone 17 Pro 系列搭载的 A19 Pro 芯片 GPU 跑分曝光，在 GeekBench 6.5.0 版 Metal 跑分为 45657 分。</p>
-    <div class="more"><a href="https://www.ithome.com/0/882/048.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
     </div>
   </section><section id="三、投融资与资本市场">
     <h2>三、投融资与资本市场</h2>
@@ -162,6 +271,13 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <h2>五、政策与监管动向</h2>
     <div class="grid">
       <article class="card" data-sec="五、政策与监管动向">
+    <h3><a href="https://www.theverge.com/news/776032/us-greenhouse-gas-emissions-trump-forecast-rhodium-group" target="_blank" rel="noopener">Trump is slowing — but not stopping — US greenhouse gas reductions</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#RAG #微调训练 #强化学习 #标准规范 #办公效率</div>
+    <p class="recap">概要：President Donald Trump has cast his shadow over the latest forecast on US greenhouse gas emissions.</p>
+    <div class="more"><a href="https://www.theverge.com/news/776032/us-greenhouse-gas-emissions-trump-forecast-rhodium-group" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="五、政策与监管动向">
     <h3><a href="http://www.geekpark.net/news/353805" target="_blank" rel="noopener">高德扫街榜，能不能做成中国的「Google Map」？</a></h3>
     <div class="meta">（2025-09-11）</div>
     <div class="tags">#Google #阿里 #多模态 #推理加速 #标准规范 #商业动态 #应用落地</div>
@@ -187,40 +303,99 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="https://www.ithome.com/0/882/085.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
     </div>
+  </section><section id="七、国际动态">
+    <h2>七、国际动态</h2>
+    <div class="grid">
+      <article class="card" data-sec="七、国际动态">
+    <h3><a href="https://www.bloomberg.com/news/videos/2025-09-10/oracle-openai-sign-300-billion-computing-deal-wsj" target="_blank" rel="noopener">Oracle, OpenAI Sign $300 Billion Computing Deal: WSJ</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#OpenAI</div>
+    <p class="recap">概要：OpenAI is buying $300 billion in computing power over about five years from Oracle, according to the Wall Street Journal. Bloomberg's Caroline Hyde has details. (Source: Bloomberg)</p>
+    <div class="more"><a href="https://www.bloomberg.com/news/videos/2025-09-10/oracle-openai-sign-300-billion-computing-deal-wsj" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="七、国际动态">
+    <h3><a href="https://arstechnica.com/ai/2025/09/developers-joke-about-coding-like-cavemen-as-ai-service-suffers-major-outage/" target="_blank" rel="noopener">Developers joke about “coding like cavemen” as AI service suffers major outage</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#Anthropic</div>
+    <p class="recap">概要：Anthropic outage takes down AI tools some developers rely on to create software.</p>
+    <div class="more"><a href="https://arstechnica.com/ai/2025/09/developers-joke-about-coding-like-cavemen-as-ai-service-suffers-major-outage/" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="七、国际动态">
+    <h3><a href="https://www.theverge.com/news/776155/amazon-augmented-reality-glasses-jayhawk-launch-rumors" target="_blank" rel="noopener">Amazon drivers could be wearing AR glasses with a built-in display next year</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#Google #Meta #AWS #强化学习 #工程与编排</div>
+    <p class="recap">概要：The new glasses would go beyond Amazon’s Echo Frames.</p>
+    <div class="more"><a href="https://www.theverge.com/news/776155/amazon-augmented-reality-glasses-jayhawk-launch-rumors" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="七、国际动态">
+    <h3><a href="https://www.zdnet.com/article/apple-watch-series-11-vs-samsung-galaxy-watch-8-ive-tested-both-and-heres-the-winner/" target="_blank" rel="noopener">Apple Watch Series 11 vs. Samsung Galaxy Watch 8: I've tested both, and here's the winner</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#Apple</div>
+    <p class="recap">概要：Which of the two top smartwatches is the most capable? Here's my verdict after trying both wearables.</p>
+    <div class="more"><a href="https://www.zdnet.com/article/apple-watch-series-11-vs-samsung-galaxy-watch-8-ive-tested-both-and-heres-the-winner/" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="七、国际动态">
+    <h3><a href="https://www.zdnet.com/article/that-new-claude-feature-may-put-your-data-at-risk-anthropic-admits/" target="_blank" rel="noopener">That new Claude feature 'may put your data at risk,' Anthropic admits</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#Anthropic</div>
+    <p class="recap">概要：Claude AI can now create and edit documents, spreadsheets, and other files. But Anthropic warns that hackers can also use that feature to snag your sensitive data.</p>
+    <div class="more"><a href="https://www.zdnet.com/article/that-new-claude-feature-may-put-your-data-at-risk-anthropic-admits/" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="七、国际动态">
+    <h3><a href="https://www.zdnet.com/article/microsoft-taps-anthropic-for-ai-in-word-and-excel-signaling-distance-from-openai/" target="_blank" rel="noopener">Microsoft taps Anthropic for AI in Word and Excel, signaling distance from OpenAI</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#OpenAI #Anthropic #Microsoft</div>
+    <p class="recap">概要：Once in a codependent relationship, Microsoft and OpenAI have decided it's probably best if they both start seeing other companies.</p>
+    <div class="more"><a href="https://www.zdnet.com/article/microsoft-taps-anthropic-for-ai-in-word-and-excel-signaling-distance-from-openai/" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="七、国际动态">
+    <h3><a href="https://www.engadget.com/science/space/nasas-perseverance-rover-finds-potential-signs-of-ancient-life-on-mars-173457976.html?src=rss" target="_blank" rel="noopener">NASA's Perseverance rover finds potential signs of ancient life on Mars</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#Meta #办公效率</div>
+    <p class="recap">概要：NASA just announced that its Perseverance rover recently found some promising signs of ancient life on Mars.</p>
+    <div class="more"><a href="https://www.engadget.com/science/space/nasas-perseverance-rover-finds-potential-signs-of-ancient-life-on-mars-173457976.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+    </div>
   </section>
-    </main>
+</main>
 
-    <!-- 右侧：趋势侧栏 -->
-    <aside class="sidebar" aria-label="Google 趋势（近一周）">
-      <div class="t-card">
-        <div class="t-hd">国外大模型 · 近一周</div>
-        <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+<!-- Trends Modal：四张趋势图 -->
+<div id="trendsModal" class="modal hidden" aria-hidden="true">
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="trendsTitle">
+    <header>
+      <h3 id="trendsTitle">Google 趋势</h3>
+      <button class="close" id="closeTrends" aria-label="关闭">×</button>
+    </header>
+    <div class="trends-grid">
+      <div class="trends-card">
+        <h4>国外模型（ChatGPT / Gemini / Claude / LLaMA / Grok）</h4>
+        <div id="t-foreign" class="trends-slot"></div>
       </div>
-      <div class="t-card">
-        <div class="t-hd">国内大模型 · 近一周</div>
-        <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      <div class="trends-card">
+        <h4>国内模型（DeepSeek / Ernie / Hunyuan / Qwen / Doubao）</h4>
+        <div id="t-domestic" class="trends-slot"></div>
       </div>
-      <div class="t-card">
-        <div class="t-hd">国内云厂商 · 近一周</div>
-        <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      <div class="trends-card">
+        <h4>市场大盘（Generative AI / LLM / AI Cloud / AI Platform / AI Infrastructure）</h4>
+        <div id="t-market" class="trends-slot"></div>
       </div>
-      <div class="t-card">
-        <div class="t-hd">AI 市场关键词 · 近一周</div>
-        <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      <div class="trends-card">
+        <h4>厂商（Volcengine / Tencent Cloud / Huawei Cloud / Baidu AI Cloud / Alibaba Cloud）</h4>
+        <div id="t-vendors" class="trends-slot"></div>
       </div>
-    </aside>
+    </div>
   </div>
 </div>
 
 <footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
 
 <script>
-/* ===== 筛选逻辑 ===== */
 const secSel  = document.getElementById('secSel');
 const search  = document.getElementById('search');
 const emptyEl = document.getElementById('emptyHint');
 
-(function(){
+/* --- 恢复 URL hash 中的筛选 --- */
+(function restoreFromHash(){
   try{
     const raw = location.hash.replace(/^#/, '');
     if (!raw) return;
@@ -230,8 +405,13 @@ const emptyEl = document.getElementById('emptyHint');
   }catch{}
 })();
 
-function debounce(fn, wait=180){ let t=null; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; }
+/* --- 防抖 --- */
+function debounce(fn, wait=180){
+  let t=null;
+  return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), wait); };
+}
 
+/* --- 过滤逻辑 --- */
 function filter(){
   const kw  = (search.value || '').trim().toLowerCase();
   const sec = secSel.value;
@@ -250,76 +430,86 @@ function filter(){
     secEl.classList.toggle('hidden', visible === 0);
   });
 
+  // 空态提示
   emptyEl.classList.toggle('hidden', totalVisible !== 0);
 
+  // 将筛选写入 URL hash（支持分享 & 刷新恢复）
   try{
     const h = '#s=' + encodeURIComponent(secSel.value) + '&q=' + encodeURIComponent(search.value.trim());
     if (location.hash !== h) history.replaceState(null, '', h);
   }catch{}
 }
 
+/* --- 监听 --- */
 const run = debounce(filter, 180);
 secSel.addEventListener('change', filter);
 search.addEventListener('input', run);
+
+/* --- 首次渲染 --- */
 filter();
 
-/* ===== Google Trends 官方 embed_loader.js ===== */
-(function mountTrends(){
-  const SCRIPT = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
-  const TIME   = 'now 7-d';
-  const cfg = {
-    foreign:  { el: 'gt-foreign',  geo: '',   kw: ['ChatGPT','Gemini','Claude','Grok','Llama'] },
-    domestic: { el: 'gt-domestic', geo: '', kw: ['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
-    vendors:  { el: 'gt-vendors',  geo: '', kw: ['Baidu AI Cloud','Huawei Cloud','Tencent Cloud','Alibaba Cloud','Volcengine'] },
-    market:   { el: 'gt-market',   geo: '',   kw: ['LLM','AI Agent','RAG','Vector Database','Prompt Engineering'] }
+/* ====== 趋势图弹窗（懒加载 Google Trends）====== */
+(function TrendsModal(){
+  const SCRIPT_SRC = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
+  const modal   = document.getElementById('trendsModal');
+  const openBtn = document.getElementById('btnTrends');
+  const closeBtn= document.getElementById('closeTrends');
+  let initialized = false;
+
+  // 四组关键词配置
+  const TRENDS = {
+    foreignModels: { geo:'',   keywords:['ChatGPT','Gemini','Claude','LLaMA','Grok'] },
+    domesticModels:{ geo:'CN', keywords:['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
+    market:        { geo:'',   keywords:['Generative AI','Large Language Model','AI Cloud','AI Platform','AI Infrastructure'] },
+    vendors:       { geo:'CN', keywords:['Volcengine','Tencent Cloud','Huawei Cloud','Baidu AI Cloud','Alibaba Cloud'] }
   };
 
-  function renderOne({ el, geo, kw }){
+  function ensureScript(cb){
+    if (window.trends && window.trends.embed) return cb();
+    const s = document.createElement('script');
+    s.src = SCRIPT_SRC; s.async = true; s.onload = cb;
+    document.head.appendChild(s);
+  }
+
+  function render(elId, {geo, keywords}, time='today 12-m'){
     try{
-      const host = 'https://trends.google.com/trends/embed/';
-      const container = document.getElementById(el);
-      if (!container) return;
-
-      // 清掉占位符，避免“加载趋势图…”残留
-      container.innerHTML = '';
-
-      const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time: TIME }));
-      const query = 'date=' + encodeURIComponent(TIME)
-                  + '&q=' + encodeURIComponent(kw.join(','))
-                  + (geo ? '&geo=' + geo : '');
-
+      const el = document.getElementById(elId);
+      if (!el) return;
+      const comparisonItem = keywords.map(k => ({ keyword:k, geo:geo||'', time }));
+      const query = 'date=' + encodeURIComponent(time) + '&q=' + encodeURIComponent(keywords.join(',')) + (geo?('&geo='+geo):'');
       trends.embed.renderExploreWidgetTo(
-        container,
+        el,
         'TIMESERIES',
-        { comparisonItem, category: 0, property: '' },
-        { exploreQuery: query, guestPath: host }
+        { comparisonItem, category:0, property:'' },
+        { exploreQuery: query, guestPath:'https://trends.google.com:443/trends/embed/' }
       );
-    }catch(e){
-      const c = document.getElementById(el);
-      if (c) c.innerHTML = '<div class="t-fallback">无法显示趋势图（网络受限/被拦截）</div>';
-      console.error('Trends render error', e);
-    }
+    }catch(e){ console.error('trends render error', e); }
   }
 
-  function boot(){
-    if (!(window.trends && window.trends.embed)) return;
-    renderOne(cfg.foreign);
-    renderOne(cfg.domestic);
-    renderOne(cfg.vendors);
-    renderOne(cfg.market);
+  function initTrends(){
+    if (initialized) return;
+    ensureScript(function(){
+      render('t-foreign',  TRENDS.foreignModels);
+      render('t-domestic', TRENDS.domesticModels, 'today 12-m');
+      render('t-market',   TRENDS.market);
+      render('t-vendors',  TRENDS.vendors, 'today 12-m');
+      initialized = true;
+    });
   }
 
-  const s = document.createElement('script');
-  s.src = SCRIPT; s.async = true; s.onload = boot;
-  document.head.appendChild(s);
+  function open(){
+    modal.classList.remove('hidden');
+    modal.setAttribute('aria-hidden','false');
+    initTrends();
+  }
+  function close(){
+    modal.classList.add('hidden');
+    modal.setAttribute('aria-hidden','true');
+  }
 
-  setTimeout(() => {
-    if (!(window.trends && window.trends.embed)) {
-      ['gt-foreign','gt-domestic','gt-vendors','gt-market'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = '<div class="t-fallback">无法加载 Google 趋势（可能被墙/被拦截）</div>';
-      });
-    }
-  }, 5000);
+  openBtn?.addEventListener('click', open);
+  closeBtn?.addEventListener('click', close);
+  modal?.addEventListener('click', (e)=>{ if (e.target === modal) close(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !modal.classList.contains('hidden')) close(); });
 })();
 </script>
