@@ -44,14 +44,17 @@ section{scroll-margin-top:70px}
 .hidden{display:none!important}
 footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-/* 右侧趋势卡片（美观稳定） */
-.t-card{
-  background:var(--card); border:1px solid var(--line); border-radius:16px;
-  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; margin-bottom:14px;
-}
+/* 右侧趋势卡片（占位容器，无 iframe） */
+.t-card{ background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; margin-bottom:14px; }
 .t-hd{ padding:10px 14px; font-weight:600; border-bottom:1px solid var(--line) }
-/* 关键：iframe 固定高度，禁用内部滚动 */
-.trend-frame{ display:block; width:100%; height:220px; border:0 }
+.t-body{ height:220px; position:relative; }
+.t-fallback{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#9aa0a6; font-size:12px; }
+
+/* 小屏优化 */
+@media (max-width:480px){
+  h1{font-size:22px}
+  h2{font-size:18px}
+}
 </style>
 
 <div class="header-wrap">
@@ -235,6 +238,13 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="http://www.geekpark.net/news/353805" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="五、政策与监管动向">
+    <h3><a href="https://www.ithome.com/0/882/106.htm" target="_blank" rel="noopener">荣耀 MagicOS 10.0 被曝“最近任务样式”新增堆叠（尝鲜版）</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#算力 #安全对齐 #隐私合规 #政策监管 #应用落地 #搜索与助手 #教育</div>
+    <p class="recap">概要：IT之家 9 月 11 日消息，据博主 @皮卡叔Doc 今日分享（该博主认证为：荣耀超话主持人），应部分用户呼声，荣耀 MagicOS10 系统增加后台最近任务堆叠（尝鲜版）样式。用户可以根据自己喜好选择最近任务样式。</p>
+    <div class="more"><a href="https://www.ithome.com/0/882/106.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="五、政策与监管动向">
     <h3><a href="https://www.ithome.com/0/882/038.htm" target="_blank" rel="noopener">Blackmagic 推 ProDock 扩展坞：首发支持苹果 iPhone 17 Pro / Max 多机位同步拍摄、子弹时间特效等</a></h3>
     <div class="meta">（2025-09-11）</div>
     <div class="tags">#Apple #安全对齐 #标准规范 #内容与营销</div>
@@ -305,78 +315,40 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <p class="recap">概要：NASA just announced that its Perseverance rover recently found some promising signs of ancient life on Mars.</p>
     <div class="more"><a href="https://www.engadget.com/science/space/nasas-perseverance-rover-finds-potential-signs-of-ancient-life-on-mars-173457976.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
-<article class="card" data-sec="七、国际动态">
-    <h3><a href="https://www.tmtpost.com/7689854.html" target="_blank" rel="noopener">AI Godfather Reveals ChatGPT's Involvement in his Breakup With Ex-girlfriend</a></h3>
-    <div class="meta">（2025-09-11）</div>
-    <div class="tags">#OpenAI #强化学习</div>
-    <p class="recap">概要：The AI-assisted breakup was just a fun part of his interview with the British newspaper and the wide-ranging interview touched on many more serious issues.</p>
-    <div class="more"><a href="https://www.tmtpost.com/7689854.html" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
     </div>
   </section>
     </main>
 
-    <!-- 右侧：趋势侧栏（近一周 · 纵列四图） -->
-    
-<aside class="sidebar" aria-label="Google 趋势（近一周）">
-  
-    <div class="t-card">
-      <div class="t-hd">国外大模型 · 近一周</div>
-      <iframe
-        class="trend-frame"
-        src="https://trends.google.com/trends/embed/?hl=zh-CN&amp;tz=480&amp;q=ChatGPT,Gemini,Claude,Grok,Llama&amp;geo=US&amp;date=now%207-d"
-        title="国外大模型 · 近一周"
-        loading="lazy"
-        referrerpolicy="strict-origin-when-cross-origin"
-      ></iframe>
-    </div>
-  
-    <div class="t-card">
-      <div class="t-hd">国内大模型 · 近一周</div>
-      <iframe
-        class="trend-frame"
-        src="https://trends.google.com/trends/embed/?hl=zh-CN&amp;tz=480&amp;q=%E6%B7%B1%E5%B0%8F%E7%9C%BC,Ernie,Hunyuan,Qwen,%E8%B1%86%E5%8C%85&amp;geo=CN&amp;date=now%207-d"
-        title="国内大模型 · 近一周"
-        loading="lazy"
-        referrerpolicy="strict-origin-when-cross-origin"
-      ></iframe>
-    </div>
-  
-    <div class="t-card">
-      <div class="t-hd">国内云厂商 · 近一周</div>
-      <iframe
-        class="trend-frame"
-        src="https://trends.google.com/trends/embed/?hl=zh-CN&amp;tz=480&amp;q=Baidu%20AI%20Cloud,Huawei%20Cloud,Tencent%20Cloud,Alibaba%20Cloud,Volcengine&amp;geo=CN&amp;date=now%207-d"
-        title="国内云厂商 · 近一周"
-        loading="lazy"
-        referrerpolicy="strict-origin-when-cross-origin"
-      ></iframe>
-    </div>
-  
-    <div class="t-card">
-      <div class="t-hd">AI 市场关键词 · 近一周</div>
-      <iframe
-        class="trend-frame"
-        src="https://trends.google.com/trends/embed/?hl=zh-CN&amp;tz=480&amp;q=LLM,AI%20Agent,RAG,Vector%20Database,Prompt%20Engineering&amp;geo=US&amp;date=now%207-d"
-        title="AI 市场关键词 · 近一周"
-        loading="lazy"
-        referrerpolicy="strict-origin-when-cross-origin"
-      ></iframe>
-    </div>
-  
-</aside>
-
+    <!-- 右侧：趋势侧栏（近一周 · 纵列四图 · embed_loader 渲染） -->
+    <aside class="sidebar" aria-label="Google 趋势（近一周）">
+      <div class="t-card">
+        <div class="t-hd">国外大模型 · 近一周</div>
+        <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-hd">国内大模型 · 近一周</div>
+        <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-hd">国内云厂商 · 近一周</div>
+        <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-hd">AI 市场关键词 · 近一周</div>
+        <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+    </aside>
   </div>
 </div>
 
 <footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
 
 <script>
+/* ===== 筛选逻辑（原样） ===== */
 const secSel  = document.getElementById('secSel');
 const search  = document.getElementById('search');
 const emptyEl = document.getElementById('emptyHint');
 
-/* 恢复 URL hash */
 (function(){
   try{
     const raw = location.hash.replace(/^#/, '');
@@ -387,10 +359,8 @@ const emptyEl = document.getElementById('emptyHint');
   }catch{}
 })();
 
-/* 防抖 */
 function debounce(fn, wait=180){ let t=null; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; }
 
-/* 过滤 */
 function filter(){
   const kw  = (search.value || '').trim().toLowerCase();
   const sec = secSel.value;
@@ -421,4 +391,55 @@ const run = debounce(filter, 180);
 secSel.addEventListener('change', filter);
 search.addEventListener('input', run);
 filter();
+
+/* ===== Google Trends 稳定加载（embed_loader.js）===== */
+(function mountTrends(){
+  const SCRIPT = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
+  const TIME   = 'today 7-d'; // 近一周
+  const cfg = {
+    foreign:  { el: 'gt-foreign',  geo: 'US', kw: ['ChatGPT','Gemini','Claude','Grok','Llama'] },
+    domestic: { el: 'gt-domestic', geo: 'CN', kw: ['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
+    vendors:  { el: 'gt-vendors',  geo: 'CN', kw: ['Baidu AI Cloud','Huawei Cloud','Tencent Cloud','Alibaba Cloud','Volcengine'] },
+    market:   { el: 'gt-market',   geo: '',   kw: ['LLM','AI Agent','RAG','Vector Database','Prompt Engineering'] }
+  };
+
+  function renderOne({ el, geo, kw }){
+    try{
+      const host = 'https://trends.google.com:443/trends/embed/';
+      const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time: TIME }));
+      const query = 'date=' + encodeURIComponent(TIME) + '&q=' + encodeURIComponent(kw.join(',')) + (geo ? '&geo=' + geo : '');
+      trends.embed.renderExploreWidgetTo(
+        document.getElementById(el),
+        'TIMESERIES',
+        { comparisonItem, category: 0, property: '' },
+        { exploreQuery: query, guestPath: host }
+      );
+    }catch(e){
+      const c = document.getElementById(el);
+      if (c) c.innerHTML = '<div class="t-fallback">无法显示趋势图（网络受限/被拦截）</div>';
+      console.error('Trends render error', e);
+    }
+  }
+
+  function boot(){
+    if (!(window.trends && window.trends.embed)) return;
+    renderOne(cfg.foreign);
+    renderOne(cfg.domestic);
+    renderOne(cfg.vendors);
+    renderOne(cfg.market);
+  }
+
+  // 加载脚本 + 超时兜底
+  const s = document.createElement('script');
+  s.src = SCRIPT; s.async = true; s.onload = boot;
+  document.head.appendChild(s);
+  setTimeout(() => {
+    if (!(window.trends && window.trends.embed)) {
+      ['gt-foreign','gt-domestic','gt-vendors','gt-market'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '<div class="t-fallback">无法加载 Google 趋势（可能被墙/被拦截）</div>';
+      });
+    }
+  }, 5000);
+})();
 </script>
