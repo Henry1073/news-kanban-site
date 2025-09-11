@@ -8,18 +8,18 @@
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,PingFang SC,Arial}
-header{max-width:1080px;margin:24px auto 8px;padding:0 16px}
+
+/* 顶部与筛选条 */
+.header-wrap{max-width:1200px;margin:24px auto 8px;padding:0 16px}
 h1{margin:8px 0 4px;font-size:26px;letter-spacing:.5px}
 .time{color:var(--sub)}
-
 .controls{
-  max-width:1080px;margin:0 auto 16px;padding:0 16px;display:flex;gap:10px;flex-wrap:wrap
+  max-width:1200px;margin:0 auto 16px;padding:0 16px;display:flex;gap:10px;flex-wrap:wrap
 }
 select,input[type="search"]{
   padding:9px 12px;border-radius:10px;border:1px solid var(--line);outline:none;min-width:180px;background:#fff
 }
 input[type="search"]{flex:1 1 280px}
-/* 右侧按钮容器 */
 .controls .right{ margin-left:auto; display:flex; gap:10px; align-items:center }
 .btn{
   padding:9px 14px;border-radius:10px;border:1px solid var(--line);
@@ -27,26 +27,22 @@ input[type="search"]{flex:1 1 280px}
 }
 .btn:hover{ border-color:var(--accent); color:var(--accent) }
 
-main{max-width:1080px;margin:0 auto;padding:0 16px 40px}
+/* 两栏布局：左新闻 + 右趋势 */
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px}
+@media (max-width: 1024px){ .layout{grid-template-columns:1fr;} .sidebar{position:static} }
+.sidebar{position:sticky; top:16px; align-self:start}
 
-h2{
-  margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);padding-left:8px
-}
-
-.grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px
-}
-
+/* 板块与卡片 */
+h2{ margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);padding-left:8px }
+.grid{ display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px }
 .card{
   background:var(--card);border-radius:14px;padding:14px 14px 12px;
   box-shadow:0 1px 3px rgba(0,0,0,.04),0 6px 14px rgba(0,0,0,.05);
   border:1px solid rgba(0,0,0,.02);
   transition:transform .12s ease, box-shadow .12s ease
 }
-.card:hover{
-  transform:translateY(-2px);
-  box-shadow:0 2px 6px rgba(0,0,0,.06),0 10px 18px rgba(0,0,0,.08)
-}
+.card:hover{ transform:translateY(-2px); box-shadow:0 2px 6px rgba(0,0,0,.06),0 10px 18px rgba(0,0,0,.08) }
 .card h3{margin:0 0 6px;font-size:16px}
 .card h3 a{text-decoration:none;color:var(--fg)}
 .card h3 a:hover{color:var(--accent)}
@@ -55,39 +51,18 @@ h2{
 .recap{margin:.35em 0}
 .more{margin-top:8px}
 .more a{color:var(--accent);text-decoration:none}
-
 section{scroll-margin-top:70px}
-
-#emptyHint{
-  color:var(--sub);text-align:center;margin:20px 0 26px;font-size:14px
-}
+#emptyHint{ color:var(--sub);text-align:center;margin:20px 0 26px;font-size:14px }
 .hidden{display:none!important}
+footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-footer{
-  max-width:1080px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px
+/* 右侧趋势卡片 */
+.t-card{
+  background:var(--card); border:1px solid var(--line); border-radius:16px;
+  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; margin-bottom:14px;
 }
-
-/* ===== Trends 模块样式 ===== */
-.modal{ position:fixed; inset:0; background:rgba(0,0,0,.38); display:flex;
-  align-items:center; justify-content:center; z-index:9999 }
-.modal.hidden{ display:none }
-.modal .panel{
-  width:min(1120px,calc(100vw - 32px)); max-height:90vh; overflow:auto;
-  background:#fff; border-radius:16px; padding:16px; box-shadow:0 12px 30px rgba(0,0,0,.2)
-}
-.modal .panel header{
-  display:flex; align-items:center; justify-content:space-between; margin-bottom:8px
-}
-.modal .panel h3{ margin:0; font-size:18px }
-.modal .close{ background:transparent;border:0;cursor:pointer;font-size:22px;line-height:1 }
-.trends-grid{
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(360px,1fr)); gap:14px
-}
-.trends-card{
-  background:var(--card); border-radius:12px; padding:10px; border:1px solid rgba(0,0,0,.06)
-}
-.trends-card h4{ margin:0 0 8px; font-size:14px; color:var(--sub) }
-.trends-slot{ height:320px }
+.t-hd{ padding:10px 14px; font-weight:600; border-bottom:1px solid var(--line) }
+.trend-frame{ display:block; width:100%; height:220px; border:0 }
 
 /* 小屏优化 */
 @media (max-width:480px){
@@ -96,10 +71,10 @@ footer{
 }
 </style>
 
-<header>
+<div class="header-wrap">
   <h1>AI 大模型新闻看板</h1>
   <div class="time">2025-09-11</div>
-</header>
+</div>
 
 <div class="controls">
   <select id="secSel" aria-label="板块筛选">
@@ -107,15 +82,14 @@ footer{
     <option value="一、市场与企业动态">一、市场与企业动态</option><option value="二、产品与技术创新">二、产品与技术创新</option><option value="三、投融资与资本市场">三、投融资与资本市场</option><option value="四、应用与落地案例">四、应用与落地案例</option><option value="五、政策与监管动向">五、政策与监管动向</option><option value="六、行业趋势与观察">六、行业趋势与观察</option><option value="七、国际动态">七、国际动态</option>
   </select>
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
-
-  <div class="right">
-    <button id="btnTrends" class="btn" type="button">趋势图</button>
-  </div>
 </div>
 
-<main id="main">
-  <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
-  <section id="一、市场与企业动态">
+<div class="wrap">
+  <div class="layout">
+    <!-- 左侧：新闻主栏 -->
+    <main id="main">
+      <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
+      <section id="一、市场与企业动态">
     <h2>一、市场与企业动态</h2>
     <div class="grid">
       <article class="card" data-sec="一、市场与企业动态">
@@ -200,6 +174,13 @@ footer{
     <div class="more"><a href="https://www.engadget.com/mobile/smartphones/center-stage-is-a-better-vision-of-the-apple-intelligence-era-160428405.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://36kr.com/p/3461734743102857?f=rss" target="_blank" rel="noopener">社交倦怠的年轻人，遇见有「活人感」的AI</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#字节跳动 #DeepSeek #算力 #应用落地 #教育 #内容与营销</div>
+    <p class="recap">概要：这届年轻人，正在普遍经历着“社交倦怠”。 白天到深夜，他们应接不暇地处理工作学习任务，属于自己的个人娱乐时间岌岌可危。不敢停下工作的脚步，也不敢和周围人诉苦，翻遍微信却发现能随时打扰的朋友屈指可数。 难以在现实生活中找到信任的诉说对象，让这些情绪失去了出口。</p>
+    <div class="more"><a href="https://36kr.com/p/3461734743102857?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
     <h3><a href="https://36kr.com/p/3461550167332224?f=rss" target="_blank" rel="noopener">8点1氪丨多家电信运营商回应eSIM手机业务；三星手机美国账号嘲讽iPhone 17系列；施华蔻“处女发质”翻译陷辱女争议</a></h3>
     <div class="meta">（2025-09-11）</div>
     <div class="tags">#OpenAI #Anthropic #AWS #Apple #阿里 #腾讯 #多模态</div>
@@ -207,11 +188,11 @@ footer{
     <div class="more"><a href="https://36kr.com/p/3461550167332224?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://36kr.com/newsflashes/3461613413258632?f=rss" target="_blank" rel="noopener">AI训推一体机销售火热，市场前景被看好</a></h3>
+    <h3><a href="https://www.ithome.com/0/882/092.htm" target="_blank" rel="noopener">小米 16 手机规格曝光：6.3 英寸 120Hz 屏幕、骁龙 8 Elite Gen 5 芯片、7000mAh 电池</a></h3>
     <div class="meta">（2025-09-11）</div>
-    <div class="tags">#安全对齐 #应用落地</div>
-    <p class="recap">概要：随着人工智能（AI）从“百模大战”走向应用落地，算力需求也从训练走向推理。AI训推一体机因为能满足企业开箱即用、安全、本地化部署需求，且支持大模型训练、推理及AI应用开发全流程，在市场上逐渐走俏。国际数据公司IDC统计显示，今年以来，国内市场已有近百家厂商推出训推一体机相关产品，其中包括不少上市公司。</p>
-    <div class="more"><a href="https://36kr.com/newsflashes/3461613413258632?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+    <div class="tags">#算力 #内容与营销</div>
+    <p class="recap">概要：IT之家 9 月 11 日消息，消息源 @heyitsyogesh 昨日（9 月 10 日）在 X 平台发布推文，分享了小米 16 手机的规格，包括 6.3 英寸 LTPO OLED 屏幕，后置三摄均为 5000 万像素，搭载高通骁龙 8 Elite Gen 5 芯片。</p>
+    <div class="more"><a href="https://www.ithome.com/0/882/092.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="二、产品与技术创新">
     <h3><a href="https://www.ithome.com/0/882/048.htm" target="_blank" rel="noopener">苹果 iPhone 17 Pro / Max GPU 跑分曝光：A19 Pro 较 A18 Pro 最多提升 40.83%</a></h3>
@@ -250,11 +231,29 @@ footer{
     <div class="more"><a href="https://www.theverge.com/news/776032/us-greenhouse-gas-emissions-trump-forecast-rhodium-group" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="五、政策与监管动向">
+    <h3><a href="http://www.geekpark.net/news/353805" target="_blank" rel="noopener">高德扫街榜，能不能做成中国的「Google Map」？</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#Google #阿里 #多模态 #推理加速 #标准规范 #商业动态 #应用落地</div>
+    <p class="recap">概要：头图来源：高德 9月10日，前几天被传得很热闹的阿里神秘业务终于揭晓——高德地图正式推出了一款基于真实导航、出行行为，融合AI技术打造而成的生活服务榜单，高德扫街榜。 与市面上常见的用户图文点评的传统榜单不同，该产品将用户的真实导航、到店等出行行为数据作为核心排名依据，旨在解决当前评价体系中普遍存在的刷分、注水等问题，为用户提供更可信的消费决策参考。</p>
+    <div class="more"><a href="http://www.geekpark.net/news/353805" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="五、政策与监管动向">
     <h3><a href="https://www.ithome.com/0/882/038.htm" target="_blank" rel="noopener">Blackmagic 推 ProDock 扩展坞：首发支持苹果 iPhone 17 Pro / Max 多机位同步拍摄、子弹时间特效等</a></h3>
     <div class="meta">（2025-09-11）</div>
     <div class="tags">#Apple #安全对齐 #标准规范 #内容与营销</div>
     <p class="recap">概要：IT之家 9 月 11 日消息，科技媒体 Appleinsider 昨日（9 月 10 日）发布博文，报道称 Blackmagic 首发推出 Camera ProDock 扩展坞，提供 HDMI、USB-C、音频接口及外接电源等专业连接，售价 295 美元（现汇率约合 2102 元人民币）起。</p>
     <div class="more"><a href="https://www.ithome.com/0/882/038.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+    </div>
+  </section><section id="六、行业趋势与观察">
+    <h2>六、行业趋势与观察</h2>
+    <div class="grid">
+      <article class="card" data-sec="六、行业趋势与观察">
+    <h3><a href="https://www.ithome.com/0/882/085.htm" target="_blank" rel="noopener">消息称某厂平板明年搭 OLED 屏幕、开始 eSIM 化，预计为荣耀 MagicPad 系列</a></h3>
+    <div class="meta">（2025-09-11）</div>
+    <div class="tags">#安全对齐 #AI编程</div>
+    <p class="recap">概要：IT之家 9 月 11 日消息，博主 @智慧皮卡丘 今天在微博透露，某厂明年推出的平板将搭载 OLED 屏幕、开始 eSIM 化。 结合博主文中 Tag 暗示和评论区猜测，预计这台平板属于荣耀 MagicPad 系列。 后续有用户在评论区询问：“手机呢？”，博主回复道：“各家也在搞”；另一名用户则询问道：“话说小平板呢？？”，博主则回复道：“一样”。</p>
+    <div class="more"><a href="https://www.ithome.com/0/882/085.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
     </div>
   </section><section id="七、国际动态">
@@ -318,33 +317,42 @@ footer{
   </article>
     </div>
   </section>
-</main>
+    </main>
 
-<!-- Trends Modal：四张趋势图 -->
-<div id="trendsModal" class="modal hidden" aria-hidden="true">
-  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="trendsTitle">
-    <header>
-      <h3 id="trendsTitle">Google 趋势</h3>
-      <button class="close" id="closeTrends" aria-label="关闭">×</button>
-    </header>
-    <div class="trends-grid">
-      <div class="trends-card">
-        <h4>国外模型（ChatGPT / Gemini / Claude / LLaMA / Grok）</h4>
-        <div id="t-foreign" class="trends-slot"></div>
+    <!-- 右侧：趋势侧栏（近一周 · 纵列四图） -->
+    <aside class="sidebar" aria-label="Google 趋势（近一周）">
+      <div class="t-card">
+        <div class="t-hd">国外大模型 · 近一周</div>
+        <iframe
+          class="trend-frame"
+          src="https://trends.google.com/trends/embed/?hl=zh-CN&tz=480&q=ChatGPT,Gemini,Claude,Grok,Llama&geo=US&date=now%207-d&gprop"
+          title="国外大模型趋势"></iframe>
       </div>
-      <div class="trends-card">
-        <h4>国内模型（DeepSeek / Ernie / Hunyuan / Qwen / Doubao）</h4>
-        <div id="t-domestic" class="trends-slot"></div>
+
+      <div class="t-card">
+        <div class="t-hd">国内大模型 · 近一周</div>
+        <iframe
+          class="trend-frame"
+          src="https://trends.google.com/trends/embed/?hl=zh-CN&tz=480&q=%E6%B7%B1%E5%B0%8F%E7%9C%BC,Ernie,Hunyuan,Qwen,%E8%B1%86%E5%8C%85&geo=CN&date=now%207-d&gprop"
+          title="国内大模型趋势"></iframe>
       </div>
-      <div class="trends-card">
-        <h4>市场大盘（Generative AI / LLM / AI Cloud / AI Platform / AI Infrastructure）</h4>
-        <div id="t-market" class="trends-slot"></div>
+
+      <div class="t-card">
+        <div class="t-hd">国内云厂商 · 近一周</div>
+        <iframe
+          class="trend-frame"
+          src="https://trends.google.com/trends/embed/?hl=zh-CN&tz=480&q=Baidu%20AI%20Cloud,Huawei%20Cloud,Tencent%20Cloud,Alibaba%20Cloud,Volcengine&geo=CN&date=now%207-d&gprop"
+          title="国内云厂商趋势"></iframe>
       </div>
-      <div class="trends-card">
-        <h4>厂商（Volcengine / Tencent Cloud / Huawei Cloud / Baidu AI Cloud / Alibaba Cloud）</h4>
-        <div id="t-vendors" class="trends-slot"></div>
+
+      <div class="t-card">
+        <div class="t-hd">AI 市场关键词 · 近一周</div>
+        <iframe
+          class="trend-frame"
+          src="https://trends.google.com/trends/embed/?hl=zh-CN&tz=480&q=LLM,AI%20Agent,RAG,Vector%20Database,Prompt%20Engineering&geo=US&date=now%207-d&gprop"
+          title="AI 市场关键词趋势"></iframe>
       </div>
-    </div>
+    </aside>
   </div>
 </div>
 
@@ -401,76 +409,9 @@ function filter(){
   }catch{}
 }
 
-/* --- 监听 --- */
+/* --- 监听与首次渲染 --- */
 const run = debounce(filter, 180);
 secSel.addEventListener('change', filter);
 search.addEventListener('input', run);
-
-/* --- 首次渲染 --- */
 filter();
-
-/* ====== 趋势图弹窗（懒加载 Google Trends）====== */
-(function TrendsModal(){
-  const SCRIPT_SRC = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
-  const modal   = document.getElementById('trendsModal');
-  const openBtn = document.getElementById('btnTrends');
-  const closeBtn= document.getElementById('closeTrends');
-  let initialized = false;
-
-  // 四组关键词配置
-  const TRENDS = {
-    foreignModels: { geo:'',   keywords:['ChatGPT','Gemini','Claude','LLaMA','Grok'] },
-    domesticModels:{ geo:'CN', keywords:['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
-    market:        { geo:'',   keywords:['Generative AI','Large Language Model','AI Cloud','AI Platform','AI Infrastructure'] },
-    vendors:       { geo:'CN', keywords:['Volcengine','Tencent Cloud','Huawei Cloud','Baidu AI Cloud','Alibaba Cloud'] }
-  };
-
-  function ensureScript(cb){
-    if (window.trends && window.trends.embed) return cb();
-    const s = document.createElement('script');
-    s.src = SCRIPT_SRC; s.async = true; s.onload = cb;
-    document.head.appendChild(s);
-  }
-
-  function render(elId, {geo, keywords}, time='today 12-m'){
-    try{
-      const el = document.getElementById(elId);
-      if (!el) return;
-      const comparisonItem = keywords.map(k => ({ keyword:k, geo:geo||'', time }));
-      const query = 'date=' + encodeURIComponent(time) + '&q=' + encodeURIComponent(keywords.join(',')) + (geo?('&geo='+geo):'');
-      trends.embed.renderExploreWidgetTo(
-        el,
-        'TIMESERIES',
-        { comparisonItem, category:0, property:'' },
-        { exploreQuery: query, guestPath:'https://trends.google.com:443/trends/embed/' }
-      );
-    }catch(e){ console.error('trends render error', e); }
-  }
-
-  function initTrends(){
-    if (initialized) return;
-    ensureScript(function(){
-      render('t-foreign',  TRENDS.foreignModels);
-      render('t-domestic', TRENDS.domesticModels, 'today 12-m');
-      render('t-market',   TRENDS.market);
-      render('t-vendors',  TRENDS.vendors, 'today 12-m');
-      initialized = true;
-    });
-  }
-
-  function open(){
-    modal.classList.remove('hidden');
-    modal.setAttribute('aria-hidden','false');
-    initTrends();
-  }
-  function close(){
-    modal.classList.add('hidden');
-    modal.setAttribute('aria-hidden','true');
-  }
-
-  openBtn?.addEventListener('click', open);
-  closeBtn?.addEventListener('click', close);
-  modal?.addEventListener('click', (e)=>{ if (e.target === modal) close(); });
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !modal.classList.contains('hidden')) close(); });
-})();
 </script>
