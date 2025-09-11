@@ -319,7 +319,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   </section>
     </main>
 
-    <!-- 右侧：趋势侧栏（近一周 · 纵列四图 · embed_loader 渲染） -->
+    <!-- 右侧：趋势侧栏（近一周 · 纵列四图 · 官方 embed_loader 渲染） -->
     <aside class="sidebar" aria-label="Google 趋势（近一周）">
       <div class="t-card">
         <div class="t-hd">国外大模型 · 近一周</div>
@@ -344,7 +344,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
 <footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
 
 <script>
-/* ===== 筛选逻辑（原样） ===== */
+/* ===== 筛选逻辑（与原版一致） ===== */
 const secSel  = document.getElementById('secSel');
 const search  = document.getElementById('search');
 const emptyEl = document.getElementById('emptyHint');
@@ -392,26 +392,28 @@ secSel.addEventListener('change', filter);
 search.addEventListener('input', run);
 filter();
 
-/* ===== Google Trends 稳定加载（embed_loader.js）===== */
+/* ===== Google Trends 稳定加载（官方 embed_loader.js，不走 API） ===== */
 (function mountTrends(){
   const SCRIPT = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
-  const TIME   = 'today 7-d'; // 近一周
+  const TIME   = 'now 7-d'; // ✅ 过去7天必须是 now 7-d
   const cfg = {
-    foreign:  { el: 'gt-foreign',  geo: 'US', kw: ['ChatGPT','Gemini','Claude','Grok','Llama'] },
+    foreign:  { el: 'gt-foreign',  geo: '',   kw: ['ChatGPT','Gemini','Claude','Grok','Llama'] }, // 全球
     domestic: { el: 'gt-domestic', geo: 'CN', kw: ['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
     vendors:  { el: 'gt-vendors',  geo: 'CN', kw: ['Baidu AI Cloud','Huawei Cloud','Tencent Cloud','Alibaba Cloud','Volcengine'] },
-    market:   { el: 'gt-market',   geo: '',   kw: ['LLM','AI Agent','RAG','Vector Database','Prompt Engineering'] }
+    market:   { el: 'gt-market',   geo: '',   kw: ['LLM','AI Agent','RAG','Vector Database','Prompt Engineering'] } // 全球
   };
 
   function renderOne({ el, geo, kw }){
     try{
-      const host = 'https://trends.google.com:443/trends/embed/';
+      const host = 'https://trends.google.com/trends/embed/'; // ✅ 不要加 :443
       const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time: TIME }));
-      const query = 'date=' + encodeURIComponent(TIME) + '&q=' + encodeURIComponent(kw.join(',')) + (geo ? '&geo=' + geo : '');
+      const query = 'date=' + encodeURIComponent(TIME)
+                  + '&q=' + encodeURIComponent(kw.join(','))
+                  + (geo ? '&geo=' + geo : '');
       trends.embed.renderExploreWidgetTo(
         document.getElementById(el),
         'TIMESERIES',
-        { comparisonItem, category: 0, property: '' },
+        { comparisonItem, category: 0, property: '' }, // ✅ 所有类别 + 网页搜索
         { exploreQuery: query, guestPath: host }
       );
     }catch(e){
@@ -429,10 +431,11 @@ filter();
     renderOne(cfg.market);
   }
 
-  // 加载脚本 + 超时兜底
   const s = document.createElement('script');
   s.src = SCRIPT; s.async = true; s.onload = boot;
   document.head.appendChild(s);
+
+  // 兜底：5s 内脚本没加载到 → 给出提示
   setTimeout(() => {
     if (!(window.trends && window.trends.embed)) {
       ['gt-foreign','gt-domestic','gt-vendors','gt-market'].forEach(id => {
