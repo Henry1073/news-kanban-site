@@ -15,11 +15,8 @@ h1{margin:8px 0 4px;font-size:26px;letter-spacing:.5px}
 select,input[type="search"]{padding:9px 12px;border-radius:10px;border:1px solid var(--line);outline:none;min-width:180px;background:#fff}
 input[type="search"]{flex:1 1 280px}
 
-/* 两栏布局：左新闻 + 右趋势 */
+/* 主容器 */
 .wrap{max-width:1200px;margin:0 auto;padding:0 12px 40px}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:18px}
-@media (max-width: 1024px){ .layout{grid-template-columns:1fr;} .sidebar{position:static} }
-.sidebar{position:sticky; top:12px; align-self:start}
 
 /* 板块与卡片 */
 h2{ margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);padding-left:8px }
@@ -44,11 +41,18 @@ section{scroll-margin-top:70px}
 .hidden{display:none!important}
 footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-/* 右侧趋势卡片 */
+/* 趋势图顶部 2×2 区 */
+.trends-top{
+  max-width:1200px; margin:0 auto 14px; padding:0 12px;
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
+}
+@media (max-width:1024px){
+  .trends-top{ grid-template-columns:1fr; }
+}
 .t-card{ background:var(--card); border:1px solid var(--line); border-radius:16px;
-  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; margin-bottom:14px; }
+  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; }
 .t-hd{ padding:10px 14px; font-weight:600; border-bottom:1px solid var(--line) }
-.t-body{ height:320px; position:relative; }   /* ⬅️ 高度改大 */
+.t-body{ height:320px; position:relative; }
 .t-fallback{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#9aa0a6; font-size:12px; }
 
 /* 小屏优化 */
@@ -71,12 +75,30 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
 </div>
 
+<!-- 顶部趋势区（2×2） -->
+<section class="trends-top" aria-label="Google 趋势（近一周）" id="trendsTop">
+  <div class="t-card">
+    <div class="t-hd">国外大模型 · 近一周</div>
+    <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+  </div>
+  <div class="t-card">
+    <div class="t-hd">国内大模型 · 近一周</div>
+    <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+  </div>
+  <div class="t-card">
+    <div class="t-hd">国内云厂商 · 近一周</div>
+    <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+  </div>
+  <div class="t-card">
+    <div class="t-hd">AI 市场关键词 · 近一周</div>
+    <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+  </div>
+</section>
+
 <div class="wrap">
-  <div class="layout">
-    <!-- 左侧：新闻主栏 -->
-    <main id="main">
-      <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
-      <section id="一、市场与企业动态">
+  <main id="main">
+    <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
+    <section id="一、市场与企业动态">
     <h2>一、市场与企业动态</h2>
     <div class="grid">
       <article class="card" data-sec="一、市场与企业动态">
@@ -136,6 +158,13 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="https://www.zdnet.com/article/i-used-a-20-ai-tool-to-finish-24-days-of-coding-in-6-hours-but-theres-a-big-catch/" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="https://www.engadget.com/gaming/pc/best-gaming-keyboard-140019954.html?src=rss" target="_blank" rel="noopener">The best gaming keyboards of 2025</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    <div class="tags">#办公效率</div>
+    <p class="recap">概要：The best gaming keyboards bring a greater feeling of comfort and control to your PC play time, whether you’re sinking into a 100-hour RPG or sweating through an online shooter.</p>
+    <div class="more"><a href="https://www.engadget.com/gaming/pc/best-gaming-keyboard-140019954.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
     <h3><a href="https://www.engadget.com/gaming/video-games-weekly-its-weird-that-esports-is-segregated-by-gender-223518454.html?src=rss" target="_blank" rel="noopener">Video Games Weekly: It's weird that esports is segregated by gender</a></h3>
     <div class="meta">（2025-09-12）</div>
     
@@ -171,6 +200,13 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="https://www.tmtpost.com/7691602.html" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="http://www.geekpark.net/news/353894" target="_blank" rel="noopener">马上上岛｜云栖大会「新世代 AI 创想岛」即将揭幕</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    
+    <p class="recap">概要：作者｜汤一涛 编辑｜ 郑玄 01 欢迎来到云栖大会！ 你好，AI 时代的原住民，欢迎来到云栖大会「AI 新世代」分论坛。 很多伟大的开端，往往萌芽于年轻人的勇敢尝试。 今天，站在这一波 AI 浪潮加速落地的时期，我们也非常相信，未来的超级应用，新的技术范式，很可能将再次从年轻人——今天的「新世代」（年龄范围 1995 年- 2009 年）上涌现。</p>
+    <div class="more"><a href="http://www.geekpark.net/news/353894" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
     <h3><a href="https://www.ithome.com/0/882/423.htm" target="_blank" rel="noopener">福布斯中国发布 2025 中国 ESG 50 强：阿里巴巴、比亚迪、小米、腾讯等在列</a></h3>
     <div class="meta">（2025-09-12）</div>
     <div class="tags">#阿里 #腾讯</div>
@@ -185,11 +221,18 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="https://www.ithome.com/0/882/379.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="https://www.ithome.com/0/882/362.htm" target="_blank" rel="noopener">美团首款 AI Agent 产品“小美”开启公测：一句话帮你点外卖，还将支持打车、订票、预约按摩店等</a></h3>
+    <h3><a href="https://www.jiqizhixin.com/articles/2025-09-12-8" target="_blank" rel="noopener">蚂蚁集团数字蚂力首批专家级“AI数字员工团队”亮相外滩大会</a></h3>
     <div class="meta">（2025-09-12）</div>
-    <div class="tags">#Apple #Agent</div>
-    <p class="recap">概要：IT之家 9 月 12 日消息，美团首款 AI Agent 产品“小美”App 已于昨日开启公测，大家可以通过苹果 App Store 及各大安卓厂商的应用商店进行下载。</p>
-    <div class="more"><a href="https://www.ithome.com/0/882/362.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
+    
+    
+    <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-12-8" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="https://www.jiqizhixin.com/articles/2025-09-12-5" target="_blank" rel="noopener">全球最懂智能体的创业者齐聚外滩大会，未来三年怎么做聊透了</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    
+    
+    <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-12-5" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="一、市场与企业动态">
     <h3><a href="https://www.leiphone.com/category/industrynews/a16Aw8oTVMpgnDUk.html" target="_blank" rel="noopener">蚂蚁集团发布AI眼镜技术框架：gPass将打造安全可信的眼镜数字服务生态</a></h3>
@@ -224,6 +267,13 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="https://www.cnet.com/tech/services-and-software/how-to-train-your-dragon-streaming-on-peacock-release-date-and-time/#ftag=CAD590a51e" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://36kr.com/p/3463377091204738?f=rss" target="_blank" rel="noopener">日企里的AI尖子生，松下中国「求变」</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    
+    <p class="recap">概要：1、成立107年的松下，如何赶上AI大模型的浪潮？ 在日本东京接受媒体采访时，松下控股株式会社全球副总裁、集团中国东北亚总代表本间哲朗，深入阐述了松下的AI落地实践。 “如果不好好应用人工智能技术，在华外资企业未来很难生存下去。”本间哲朗的这句话，道出了松下中国加码AI的紧迫感。</p>
+    <div class="more"><a href="https://36kr.com/p/3463377091204738?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
     <h3><a href="http://www.geekpark.net/news/353832" target="_blank" rel="noopener">西贝贾国龙称一定起诉罗永浩；支付宝推出「AI 付」服务；iPhone 17 京东、天猫预订量比上代大增｜极客早知道</a></h3>
     <div class="meta">（2025-09-12）</div>
     <div class="tags">#百度 #阿里 #金融</div>
@@ -236,13 +286,6 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="tags">#语音</div>
     <p class="recap">概要：IT之家 9 月 12 日消息，小米集团 AI 实验室今日宣布，旗下 Kaldi 团队上个月发布了基于 Flow Matching 架构的 ZipVoice 系列语音合成（TTS）模型，包括： ZipVoice（零样本单说话人语音合成模型） ZipVoice-Dialog（零样本对话语音合成模型） 据官方介绍，作为 zipformer…</p>
     <div class="more"><a href="https://www.ithome.com/0/882/378.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.ithome.com/0/882/358.htm" target="_blank" rel="noopener">消息称阿里、百度使用自研芯片训练 AI 模型，英伟达回应</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#百度 #阿里</div>
-    <p class="recap">概要：北京时间 9 月 12 日，据科技网站 The Information 报道，四位知情人士称，阿里巴巴、百度已开始采用内部自主设计的芯片训练他们的 AI 大模型，取代了部分英伟达芯片。 报道称，阿里自今年初以来已将自研芯片应用于轻量级 AI 模型的训练，百度则正试验使用昆仑芯的 P800 芯片训练新版文心大模型。</p>
-    <div class="more"><a href="https://www.ithome.com/0/882/358.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="二、产品与技术创新">
     <h3><a href="https://www.jiqizhixin.com/articles/2025-09-12-2" target="_blank" rel="noopener">全新MoE架构！阿里开源Qwen3-Next，训练成本直降9成</a></h3>
@@ -300,20 +343,6 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="tags">#Apple #应用落地</div>
     <p class="recap">概要：今日热点导览 NASA发现火星潜在生命迹象 恒大物业：11日上午9时起短暂停止买卖 追觅创始人俞浩回应破产传闻 美国财政部向联邦雇员征求省钱点子 TOP3大新闻 西贝创始人称将起诉罗永浩，宣布全国门店上线“罗永浩菜单” 近日，罗永浩吐槽西贝是预制菜引发热议。</p>
     <div class="more"><a href="https://36kr.com/p/3462956477388425?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="四、应用与落地案例">
-    <h3><a href="https://36kr.com/newsflashes/3463255092156040?f=rss" target="_blank" rel="noopener">微信AI搜索入口优化：目前仍处于灰度测试期</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#多模态 #应用落地 #搜索与助手</div>
-    <p class="recap">概要：近日，微信搜索界面更新，微信搜索框下已接入深度搜索和多模态的能力，通过微信首页顶部点下搜索框就能看到。记者获悉，微信搜一搜持续优化AI搜索能力，在搜索入口和体验上进一步优化升级：用户点击微信对话框的顶部搜索框时，可看到“深度思考”模式，还可上传图片或文件，获得更精准、智能化的搜索结果。此外提供“AI搜索”、“问元宝”入口，给用户更丰富的智能搜索选择。</p>
-    <div class="more"><a href="https://36kr.com/newsflashes/3463255092156040?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="四、应用与落地案例">
-    <h3><a href="https://www.ithome.com/0/882/343.htm" target="_blank" rel="noopener">火狐 Firefox 143 浏览器前瞻：集成 Google Lens 识图搜图、引入本地 AI 助手 Page Buddy</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#Google #应用落地 #搜索与助手 #内容与营销</div>
-    <p class="recap">概要：IT之家 9 月 12 日消息，科技媒体 omgubuntu 昨日（9 月 11 日）发布博文，报道称 Mozilla 计划下周发布火狐 Firefox 143 浏览器，预估将集成 Google Lens、在地址栏显示实时股市数据（可选开启），以及本地 AI 聊天工具“Page Buddy”。</p>
-    <div class="more"><a href="https://www.ithome.com/0/882/343.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
     </div>
   </section><section id="六、行业趋势与观察">
@@ -401,6 +430,13 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="https://www.engadget.com/ai/microsoft-and-openai-announce-the-next-phase-of-their-partnership-035247037.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="七、国际动态">
+    <h3><a href="https://www.tmtpost.com/7691903.html" target="_blank" rel="noopener">Microsoft Aims for Self-Sufficiency with Massive Investment in AI, Pivoting from Dependence on OpenAI</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    <div class="tags">#OpenAI #Microsoft</div>
+    <p class="recap">概要：Microsoft AI CEO suggested the company wants to forge its own path in AI, while still supporting OpenAI with cloud-computing services.</p>
+    <div class="more"><a href="https://www.tmtpost.com/7691903.html" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="七、国际动态">
     <h3><a href="https://www.tmtpost.com/7691765.html" target="_blank" rel="noopener">OpenAI To Give a $100 Billion Stake to Nonprofit Parent as Tentative Deal with Microsoft Sets the Stage for Restructure</a></h3>
     <div class="meta">（2025-09-12）</div>
     <div class="tags">#OpenAI #Microsoft</div>
@@ -430,28 +466,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   </article>
     </div>
   </section>
-    </main>
-
-    <!-- 右侧：趋势侧栏 -->
-    <aside class="sidebar" aria-label="Google 趋势（近一周）">
-      <div class="t-card">
-        <div class="t-hd">国外大模型 · 近一周</div>
-        <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-      </div>
-      <div class="t-card">
-        <div class="t-hd">国内大模型 · 近一周</div>
-        <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-      </div>
-      <div class="t-card">
-        <div class="t-hd">国内云厂商 · 近一周</div>
-        <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-      </div>
-      <div class="t-card">
-        <div class="t-hd">AI 市场关键词 · 近一周</div>
-        <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-      </div>
-    </aside>
-  </div>
+  </main>
 </div>
 
 <footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
@@ -479,7 +494,8 @@ function filter(){
   const sec = secSel.value;
   let totalVisible = 0;
 
-  document.querySelectorAll('section').forEach(secEl=>{
+  // ✅ 只筛选新闻主区，避免把顶部趋势区隐藏
+  document.querySelectorAll('#main section').forEach(secEl=>{
     let visible = 0;
     secEl.querySelectorAll('.card').forEach(card=>{
       const inSec = !sec || card.dataset.sec === sec;
@@ -492,6 +508,7 @@ function filter(){
     secEl.classList.toggle('hidden', visible === 0);
   });
 
+  // 空态提示
   emptyEl.classList.toggle('hidden', totalVisible !== 0);
 
   try{
@@ -522,7 +539,6 @@ filter();
       const container = document.getElementById(el);
       if (!container) return;
 
-      // 清掉占位符，避免“加载趋势图…”残留
       container.innerHTML = '';
 
       const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time: TIME }));
