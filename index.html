@@ -15,11 +15,8 @@ h1{margin:8px 0 4px;font-size:26px;letter-spacing:.5px}
 select,input[type="search"]{padding:9px 12px;border-radius:10px;border:1px solid var(--line);outline:none;min-width:180px;background:#fff}
 input[type="search"]{flex:1 1 280px}
 
-/* 两栏布局：左新闻 + 右趋势 */
+/* 主容器 */
 .wrap{max-width:1200px;margin:0 auto;padding:0 12px 40px}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:18px}
-@media (max-width: 1024px){ .layout{grid-template-columns:1fr;} .sidebar{position:static} }
-.sidebar{position:sticky; top:12px; align-self:start}
 
 /* 板块与卡片 */
 h2{ margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);padding-left:8px }
@@ -44,11 +41,18 @@ section{scroll-margin-top:70px}
 .hidden{display:none!important}
 footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-/* 右侧趋势卡片 */
+/* 趋势图顶部 2×2 区 */
+.trends-top{
+  max-width:1200px; margin:0 auto 14px; padding:0 12px;
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
+}
+@media (max-width:1024px){
+  .trends-top{ grid-template-columns:1fr; }
+}
 .t-card{ background:var(--card); border:1px solid var(--line); border-radius:16px;
-  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; margin-bottom:14px; }
+  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; }
 .t-hd{ padding:10px 14px; font-weight:600; border-bottom:1px solid var(--line) }
-.t-body{ height:320px; position:relative; }   /* ⬅️ 高度改大 */
+.t-body{ height:320px; position:relative; }
 .t-fallback{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#9aa0a6; font-size:12px; }
 
 /* 小屏优化 */
@@ -71,12 +75,30 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
 </div>
 
+<!-- 顶部趋势区（2×2） -->
+<section class="trends-top" aria-label="Google 趋势（近一周）" id="trendsTop">
+  <div class="t-card">
+    <div class="t-hd">国外大模型 · 近一周</div>
+    <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+  </div>
+  <div class="t-card">
+    <div class="t-hd">国内大模型 · 近一周</div>
+    <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+  </div>
+  <div class="t-card">
+    <div class="t-hd">国内云厂商 · 近一周</div>
+    <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+  </div>
+  <div class="t-card">
+    <div class="t-hd">AI 市场关键词 · 近一周</div>
+    <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+  </div>
+</section>
+
 <div class="wrap">
-  <div class="layout">
-    <!-- 左侧：新闻主栏 -->
-    <main id="main">
-      <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
-      <section id="一、市场与企业动态">
+  <main id="main">
+    <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
+    <section id="一、市场与企业动态">
     <h2>一、市场与企业动态</h2>
     <div class="grid">
       <article class="card" data-sec="一、市场与企业动态">
@@ -106,6 +128,13 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     
     <p class="recap">概要：Federal Trade Commission heaps pressure on Big Tech after high-profile cases of harm to young users of chatbots</p>
     <div class="more"><a href="https://www.ft.com/content/91b363dc-3ec7-4c55-8876-14676d2fe8dc" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="https://www.technologyreview.com/2025/09/12/1123562/how-do-ai-models-generate-videos/" target="_blank" rel="noopener">How do AI models generate videos?</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    
+    <p class="recap">概要：MIT Technology Review Explains: Let our writers untangle the complex, messy world of technology to help you understand what’s coming next. You can read more from the series here.</p>
+    <div class="more"><a href="https://www.technologyreview.com/2025/09/12/1123562/how-do-ai-models-generate-videos/" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="一、市场与企业动态">
     <h3><a href="https://www.technologyreview.com/2025/09/11/1123553/maha-report-gun-violence-checkup/" target="_blank" rel="noopener">We can’t “make American children healthy again” without tackling the gun crisis</a></h3>
@@ -170,83 +199,6 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <p class="recap">概要：Grok has once again been caught spreading blatant misinformation on X.</p>
     <div class="more"><a href="https://www.engadget.com/ai/grok-claimed-the-charlie-kirk-assassination-video-was-a-meme-edit-175640641.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="http://www.geekpark.net/news/353902" target="_blank" rel="noopener">一根路亚卖出 60 万支，两个门外汉在拼多多圈粉年轻钓鱼佬？</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    
-    <p class="recap">概要：作者｜苏子华 编辑｜郑玄 威海，这座北方小城，被誉为「中国钓具之都」，一根小小的鱼竿，撬动了一个超过百亿规模的产业。差不多全球每 10 根鱼竿，就有 6 根来自威海。这个城市，撑起了世界钓具市场的半壁江山。 在过去，威海钓具的模式很简单：代工生产，品牌溢价都被海外品牌拿走；而如今，大量中国自主品牌扎堆在这里诞生，在竞争中达到世界领先。</p>
-    <div class="more"><a href="http://www.geekpark.net/news/353902" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="http://www.geekpark.net/news/353901" target="_blank" rel="noopener">为了网罗 AI 创新者，上海搞了场万人科创大赛</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    
-    <p class="recap">概要：​ 作者｜苏子华 编辑｜郑玄 如果有人问，AI 时代最酷的地方在哪？ 在 9 月，这个答案应该是上海。9 月 10 日，2025 Inclusion·外滩大会科技智能创新赛（简称「外滩大会 AI 科创赛」）在上海落下帷幕。</p>
-    <div class="more"><a href="http://www.geekpark.net/news/353901" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="http://www.geekpark.net/news/353894" target="_blank" rel="noopener">马上上岛｜云栖大会「新世代 AI 创想岛」即将揭幕</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    
-    <p class="recap">概要：作者｜汤一涛 编辑｜ 郑玄 01 欢迎来到云栖大会！ 你好，AI 时代的原住民，欢迎来到云栖大会「AI 新世代」分论坛。 很多伟大的开端，往往萌芽于年轻人的勇敢尝试。 今天，站在这一波 AI 浪潮加速落地的时期，我们也非常相信，未来的超级应用，新的技术范式，很可能将再次从年轻人——今天的「新世代」（年龄范围 1995 年- 2009 年）上涌现。</p>
-    <div class="more"><a href="http://www.geekpark.net/news/353894" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="https://www.ithome.com/0/882/541.htm" target="_blank" rel="noopener">华为悬赏单项最高 100 万元、攻克存储技术难题，6 支科研团队荣获第五届 “奥林帕斯奖”</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#华为</div>
-    <p class="recap">概要：IT之家 9 月 12 日消息，据华为数据存储官方今日消息，在 2025 全球数据存储教授论坛上，第五届“奥林帕斯奖”获奖名单正式揭晓。 来自国内外的 6 支顶尖科研团队，凭借其在数据存储领域的技术突破，分别斩获 1 项奥林帕斯奖与 5 项奥林帕斯先锋奖。</p>
-    <div class="more"><a href="https://www.ithome.com/0/882/541.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="https://www.ithome.com/0/882/535.htm" target="_blank" rel="noopener">AMD 举办 Mini AI 工作站创新沙龙：锐龙 AI Max+ 395 开启端侧 AI“普惠”时代</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#AMD</div>
-    <p class="recap">概要：AMD 在 2025 年 1 月发布了其最新的移动处理器系列 —— 锐龙 AI MAX 300 系列，他最大的特点是一颗处理器里几乎实现了 Zen 5 CPU、RDNA 3.5 GPU 以及 XDNA 2 NPU 三大架构的顶配：16 颗 Zen 5 核心，40CU 的集显以及高达 50 TOPs 的 NPU，剑指下一代 AI PC 和移动工作站和 Mini AI…</p>
-    <div class="more"><a href="https://www.ithome.com/0/882/535.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="https://www.ithome.com/0/882/512.htm" target="_blank" rel="noopener">【IT之家评测室】R9 9850HX + RTX 5060，COLORFIRE MEOW R16 萌潮游戏本评测</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    
-    <p class="recap">概要：8 月 27 日，七彩虹子品牌 COLORFIRE 正式推出 MEOW 系列的高端旗舰机型 MEOW R16 Ultra 旗舰游戏本。作为 MEOW R16 标准版与 Pro 版的后续新品，这款游戏本是 COLORFIRE 专门为年轻群体打造的全新潮流游戏本。其不仅采用 ACD 面全金属材质打造机身，厚度更是控制在 19.9mm 的轻薄水准。</p>
-    <div class="more"><a href="https://www.ithome.com/0/882/512.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="https://www.jiqizhixin.com/articles/2025-09-12-8" target="_blank" rel="noopener">蚂蚁集团数字蚂力首批专家级“AI数字员工团队”亮相外滩大会</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    
-    
-    <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-12-8" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="https://www.jiqizhixin.com/articles/2025-09-12-5" target="_blank" rel="noopener">全球最懂智能体的创业者齐聚外滩大会，未来三年怎么做聊透了</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    
-    
-    <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-12-5" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="https://www.leiphone.com/category/industrynews/a16Aw8oTVMpgnDUk.html" target="_blank" rel="noopener">蚂蚁集团发布AI眼镜技术框架：gPass将打造安全可信的眼镜数字服务生态</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#安全对齐 #商业动态</div>
-    <p class="recap">概要：9月12日，在2025 Inclusion·外滩大会上，蚂蚁集团发布了全球首个智能眼镜可信连接技术框架——gPass。该技术具备“安全、交互、连接”三大核心能力，致力于实现AI眼镜与智能体之间安全、可信、即时信息交互，为用户打造自然无感的服务体验，同时构建起面向眼镜厂商和开发者的安全AI数字服务生态。</p>
-    <div class="more"><a href="https://www.leiphone.com/category/industrynews/a16Aw8oTVMpgnDUk.html" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="https://www.leiphone.com/category/industrynews/4W5Xm42ZwIMfTyvq.html" target="_blank" rel="noopener">小而美的AI生活小秘书：美团首款AI Agent产品“小美”公测</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#Agent</div>
-    <p class="recap">概要：9月12日，美团首款AI Agent产品“小美”App官宣开展公测。记者了解到，“小美”定位为“小而美的AI生活小秘书”，“小”指简单、“美”指美好生活。“小美”搭载了月初发布的美团自研模型LongCat-Flash-Chat ，通过简单的自然语言交互、内部接口调用，能够实现原生、丝滑的外卖下单、餐厅推荐、订座导航等本地生活服务体验。</p>
-    <div class="more"><a href="https://www.leiphone.com/category/industrynews/4W5Xm42ZwIMfTyvq.html" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="https://www.leiphone.com/category/zaobao/iOpPImdsIUSkxsCs.html" target="_blank" rel="noopener">2026年买新能源车恢复征税！至少缴5%；曝哪吒汽车因流量服务欠费将断网，通信流量商回应；NASA禁止中国公民参与项目丨雷峰早报</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#汽车出行</div>
-    <p class="recap">概要：要闻提示 1.2026年买新能源车恢复征税！车购税至少缴5% 2.小红书被网信办约谈，官方回应 3.多名用户收到短信称“哪吒汽车将断网”，要求用户自行为车机购买流量，通信流量商回应 4.iPhone Air在华发售延期！</p>
-    <div class="more"><a href="https://www.leiphone.com/category/zaobao/iOpPImdsIUSkxsCs.html" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
     </div>
   </section><section id="二、产品与技术创新">
     <h2>二、产品与技术创新</h2>
@@ -265,69 +217,6 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <p class="recap">概要：You can watch the high-flying adventure flick in one month.</p>
     <div class="more"><a href="https://www.cnet.com/tech/services-and-software/how-to-train-your-dragon-streaming-on-peacock-release-date-and-time/#ftag=CAD590a51e" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://36kr.com/p/3463377091204738?f=rss" target="_blank" rel="noopener">日企里的AI尖子生，松下中国「求变」</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    
-    <p class="recap">概要：1、成立107年的松下，如何赶上AI大模型的浪潮？ 在日本东京接受媒体采访时，松下控股株式会社全球副总裁、集团中国东北亚总代表本间哲朗，深入阐述了松下的AI落地实践。 “如果不好好应用人工智能技术，在华外资企业未来很难生存下去。”本间哲朗的这句话，道出了松下中国加码AI的紧迫感。</p>
-    <div class="more"><a href="https://36kr.com/p/3463377091204738?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="http://www.geekpark.net/news/353832" target="_blank" rel="noopener">西贝贾国龙称一定起诉罗永浩；支付宝推出「AI 付」服务；iPhone 17 京东、天猫预订量比上代大增｜极客早知道</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#百度 #阿里 #金融</div>
-    <p class="recap">概要：外媒报道阿里巴巴、百度开始采用自研芯片训练 AI 模型 《The Information》杂志周四援引四名直接知情人士的消息报道，中国的阿里巴巴和百度已开始使用自主设计的芯片训练其 AI 模型，部分替代了英伟达（NVIDIA）生产的芯片。</p>
-    <div class="more"><a href="http://www.geekpark.net/news/353832" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.ithome.com/0/882/493.htm" target="_blank" rel="noopener">Photoshop 又获一 AI 利器，本月将集成谷歌“最强 P 图模型”Nano Banana</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#应用落地</div>
-    <p class="recap">概要：IT之家 9 月 12 日消息，Adobe 首席设计推广大使 Howard Pinsky 昨天在 X 平台宣布，谷歌的 Nano Banana 模型将于本月内登陆 Photoshop，很快用户就能够将基于提示词的编辑与 Photoshop 的选区、图层、蒙版等“非破坏性”工具结合起来使用。</p>
-    <div class="more"><a href="https://www.ithome.com/0/882/493.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.jiqizhixin.com/articles/2025-09-12-2" target="_blank" rel="noopener">全新MoE架构！阿里开源Qwen3-Next，训练成本直降9成</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#阿里 #MoE</div>
-    
-    <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-12-2" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.qbitai.com/2025/09/330736.html" target="_blank" rel="noopener">实测！Qwen下一代基础架构突袭！秒解AIME数学竞赛题，提速10倍+性价比提升10倍</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#Google #阿里</div>
-    <p class="recap">概要：超过了闭源模型Gemini-2.5-Flash-Thinking</p>
-    <div class="more"><a href="https://www.qbitai.com/2025/09/330736.html" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.qbitai.com/2025/09/330698.html" target="_blank" rel="noopener">央企怎么做超级智能体？对谈中电信天翼AI：自研模型为底座，自主规划是必须，能适应千行百业才行</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    
-    <p class="recap">概要：如何打造央企第一智能体</p>
-    <div class="more"><a href="https://www.qbitai.com/2025/09/330698.html" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.leiphone.com/category/industrynews/oSyWavq3jzDo7Daf.html" target="_blank" rel="noopener">全球最懂智能体的创业者齐聚外滩大会，未来三年怎么做聊透了</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    
-    <p class="recap">概要：2025年被称为“智能体元年”的声音不绝于耳——大模型技术快速发展，智能体应用密集涌现，一场由AI智能体引领的变革是否真正到来？ 9月11日，在2025 Inclusion·外滩大会“智能体时代进化论”见解论坛上，来自学术界与产业界的多位专家就此展开深度讨论。</p>
-    <div class="more"><a href="https://www.leiphone.com/category/industrynews/oSyWavq3jzDo7Daf.html" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.leiphone.com/category/industrynews/I9smFO0azXGskj3z.html" target="_blank" rel="noopener">挑战主流认知！蚂蚁、人大在2025外滩大会发布行业首个原生MoE扩散语言模型</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#MoE</div>
-    <p class="recap">概要：蚂蚁集团和人民大学联合研发原生MoE架构扩散语言模型（dLLM) LLaDA-MoE，在约20T数据上完成了从零训练MoE架构的扩散语言模型，验证了工业级大规模训练的扩展性和稳定性；效果超过此前发布稠密扩散语言模型LLaDA1.0/1.5和Dream-7B，比肩等效自回归模型，并保有数倍的推理速度优势。</p>
-    <div class="more"><a href="https://www.leiphone.com/category/industrynews/I9smFO0azXGskj3z.html" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.leiphone.com/category/industrynews/lkwGjOnBOJIVcgKY.html" target="_blank" rel="noopener">阿里开源下一代模型架构Qwen3-Next，模型训练及推理性价比创新高</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#阿里</div>
-    <p class="recap">概要：9月12日，阿里通义发布下一代基础模型架构Qwen3-Next。Qwen3-Next针对大模型在上下文长度和总参数两方面不断扩展（Scaling）的未来趋势而设计，采用全新的高稀疏MoE架构，并对经典Transformer核心组件进行了重构，创新线性注意力和自研的门控注意力结合的混合注意力机制，实现了模型训练和推理的双重性价比突破。</p>
-    <div class="more"><a href="https://www.leiphone.com/category/industrynews/lkwGjOnBOJIVcgKY.html" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
     </div>
   </section><section id="三、投融资与资本市场">
     <h2>三、投融资与资本市场</h2>
@@ -338,24 +227,6 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="tags">#OpenAI #Microsoft #投融资</div>
     <p class="recap">概要：Microsoft Chairman and Chief Executive Officer Satya Nadella (L), speaks with OpenAI Chief Executive Officer Sam Altman, who joined by video during the Microsoft Build 2025, conference in…</p>
     <div class="more"><a href="https://www.theverge.com/news/776884/openai-microsoft-mou" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-    </div>
-  </section><section id="四、应用与落地案例">
-    <h2>四、应用与落地案例</h2>
-    <div class="grid">
-      <article class="card" data-sec="四、应用与落地案例">
-    <h3><a href="https://36kr.com/p/3462956477388425?f=rss" target="_blank" rel="noopener">8点1氪丨西贝将起诉罗永浩并上线“罗永浩菜单”；苹果回应AirPods Pro 3不含充电线；多地回应非婚生子如何申领育儿补贴</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#Apple #应用落地</div>
-    <p class="recap">概要：今日热点导览 NASA发现火星潜在生命迹象 恒大物业：11日上午9时起短暂停止买卖 追觅创始人俞浩回应破产传闻 美国财政部向联邦雇员征求省钱点子 TOP3大新闻 西贝创始人称将起诉罗永浩，宣布全国门店上线“罗永浩菜单” 近日，罗永浩吐槽西贝是预制菜引发热议。</p>
-    <div class="more"><a href="https://36kr.com/p/3462956477388425?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="四、应用与落地案例">
-    <h3><a href="https://www.leiphone.com/category/industrynews/2lNqZp6reYzaZc4L.html" target="_blank" rel="noopener">让每位医生拥有专属AI助手，AQ发布智能体开放平台</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#搜索与助手</div>
-    <p class="recap">概要：9月12日，在2025 Inclusion外滩大会上，蚂蚁集团旗下AI健康应用AQ发布一系列产品新功能，围绕家庭健康管理、老年人防骗就医等痛点，全新上线“健康档案”、联合中国移动推出“AI打假防骗专线”，并推出智能体开放平台，助力更多医生打造AI助手实现分身有术。</p>
-    <div class="more"><a href="https://www.leiphone.com/category/industrynews/2lNqZp6reYzaZc4L.html" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
     </div>
   </section><section id="七、国际动态">
@@ -424,58 +295,9 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <p class="recap">概要：Microsoft and OpenAI have issued a joint statement to say that they have signed a non-binding memorandum of understanding for the &quot;next phase&quot; of their partnership.</p>
     <div class="more"><a href="https://www.engadget.com/ai/microsoft-and-openai-announce-the-next-phase-of-their-partnership-035247037.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
-<article class="card" data-sec="七、国际动态">
-    <h3><a href="https://www.ithome.com/0/882/502.htm" target="_blank" rel="noopener">诺奖得主哈萨比斯：未来数年 AI 有望将新药开发用时降至数月级别</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#Google</div>
-    <p class="recap">概要：IT之家 9 月 12 日消息，谷歌 DeepMind 部门首席执行官、2024 年诺贝尔化学奖得主戴米斯・哈萨比斯 (Demis Hassabis) 在接受彭博电视台采访时表示，他希望在未来数年内新药研发时间能从按年计算降低至按月计算，而在人工智能的支持下这一目标不仅可能达成甚至能以更快的速度实现。</p>
-    <div class="more"><a href="https://www.ithome.com/0/882/502.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="七、国际动态">
-    <h3><a href="https://www.jiqizhixin.com/articles/2025-09-12-3" target="_blank" rel="noopener">姚顺雨离职OpenAI，「亿元入职腾讯」传闻引爆AI圈，鹅厂辟谣了</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#OpenAI #腾讯</div>
-    
-    <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-12-3" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="七、国际动态">
-    <h3><a href="https://www.qbitai.com/2025/09/330663.html" target="_blank" rel="noopener">外滩大会今年太AI了！王坚暴论：OpenAI确实站在了历史错误的一边</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#OpenAI</div>
-    <p class="recap">概要：大佬们今年在外滩大会讲了啥，都在这里了</p>
-    <div class="more"><a href="https://www.qbitai.com/2025/09/330663.html" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="七、国际动态">
-    <h3><a href="https://www.qbitai.com/2025/09/330647.html" target="_blank" rel="noopener">Transformer作者：DeepSeek才有搞头，OpenAI指望不上了</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#OpenAI #DeepSeek</div>
-    <p class="recap">概要：“闭源人工智能在阻碍我们探索真正的科学”</p>
-    <div class="more"><a href="https://www.qbitai.com/2025/09/330647.html" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
     </div>
   </section>
-    </main>
-
-    <!-- 右侧：趋势侧栏 -->
-    <aside class="sidebar" aria-label="Google 趋势（近一周）">
-      <div class="t-card">
-        <div class="t-hd">国外大模型 · 近一周</div>
-        <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-      </div>
-      <div class="t-card">
-        <div class="t-hd">国内大模型 · 近一周</div>
-        <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-      </div>
-      <div class="t-card">
-        <div class="t-hd">国内云厂商 · 近一周</div>
-        <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-      </div>
-      <div class="t-card">
-        <div class="t-hd">AI 市场关键词 · 近一周</div>
-        <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-      </div>
-    </aside>
-  </div>
+  </main>
 </div>
 
 <footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
@@ -503,7 +325,8 @@ function filter(){
   const sec = secSel.value;
   let totalVisible = 0;
 
-  document.querySelectorAll('section').forEach(secEl=>{
+  // ✅ 只筛选新闻主区，避免把顶部趋势区隐藏
+  document.querySelectorAll('#main section').forEach(secEl=>{
     let visible = 0;
     secEl.querySelectorAll('.card').forEach(card=>{
       const inSec = !sec || card.dataset.sec === sec;
@@ -516,6 +339,7 @@ function filter(){
     secEl.classList.toggle('hidden', visible === 0);
   });
 
+  // 空态提示
   emptyEl.classList.toggle('hidden', totalVisible !== 0);
 
   try{
@@ -546,7 +370,6 @@ filter();
       const container = document.getElementById(el);
       if (!container) return;
 
-      // 清掉占位符，避免“加载趋势图…”残留
       container.innerHTML = '';
 
       const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time: TIME }));
