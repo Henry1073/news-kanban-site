@@ -15,8 +15,11 @@ h1{margin:8px 0 4px;font-size:26px;letter-spacing:.5px}
 select,input[type="search"]{padding:9px 12px;border-radius:10px;border:1px solid var(--line);outline:none;min-width:180px;background:#fff}
 input[type="search"]{flex:1 1 280px}
 
-/* 主容器 */
+/* 两栏布局：左新闻 + 右趋势 */
 .wrap{max-width:1200px;margin:0 auto;padding:0 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:18px}
+@media (max-width: 1024px){ .layout{grid-template-columns:1fr;} .sidebar{position:static} }
+.sidebar{position:sticky; top:12px; align-self:start}
 
 /* 板块与卡片 */
 h2{ margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);padding-left:8px }
@@ -41,18 +44,11 @@ section{scroll-margin-top:70px}
 .hidden{display:none!important}
 footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-/* 趋势图顶部 2×2 区 */
-.trends-top{
-  max-width:1200px; margin:0 auto 14px; padding:0 12px;
-  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
-}
-@media (max-width:1024px){
-  .trends-top{ grid-template-columns:1fr; }
-}
+/* 右侧趋势卡片 */
 .t-card{ background:var(--card); border:1px solid var(--line); border-radius:16px;
-  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; }
+  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; margin-bottom:14px; }
 .t-hd{ padding:10px 14px; font-weight:600; border-bottom:1px solid var(--line) }
-.t-body{ height:320px; position:relative; }
+.t-body{ height:320px; position:relative; }   /* ⬅️ 高度改大 */
 .t-fallback{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#9aa0a6; font-size:12px; }
 
 /* 小屏优化 */
@@ -75,30 +71,12 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
 </div>
 
-<!-- 顶部趋势区（2×2） -->
-<section class="trends-top" aria-label="Google 趋势（近一周）" id="trendsTop">
-  <div class="t-card">
-    <div class="t-hd">国外大模型 · 近一周</div>
-    <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-  </div>
-  <div class="t-card">
-    <div class="t-hd">国内大模型 · 近一周</div>
-    <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-  </div>
-  <div class="t-card">
-    <div class="t-hd">国内云厂商 · 近一周</div>
-    <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-  </div>
-  <div class="t-card">
-    <div class="t-hd">AI 市场关键词 · 近一周</div>
-    <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-  </div>
-</section>
-
 <div class="wrap">
-  <main id="main">
-    <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
-    <section id="一、市场与企业动态">
+  <div class="layout">
+    <!-- 左侧：新闻主栏 -->
+    <main id="main">
+      <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
+      <section id="一、市场与企业动态">
     <h2>一、市场与企业动态</h2>
     <div class="grid">
       <article class="card" data-sec="一、市场与企业动态">
@@ -186,20 +164,6 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="https://www.engadget.com/ai/grok-claimed-the-charlie-kirk-assassination-video-was-a-meme-edit-175640641.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="https://www.tmtpost.com/7691716.html" target="_blank" rel="noopener">AI Has the Power to Transform Robotics, But Data and Models Remain the Biggest Hurdles, Says Unitree Robotics Founder</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#机器人</div>
-    <p class="recap">概要：He admitted that his biggest personal regret is not engaging with AI earlier, having focused exclusively on robotics since 2011.</p>
-    <div class="more"><a href="https://www.tmtpost.com/7691716.html" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="https://www.tmtpost.com/7691602.html" target="_blank" rel="noopener">AI Agents Could Replace Apps Entirely, Says Ant Group CEO</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    
-    <p class="recap">概要：Zhu Xiaohu said that startups in the AI era are fundamentally no different from those in the PC or mobile internet eras.</p>
-    <div class="more"><a href="https://www.tmtpost.com/7691602.html" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
     <h3><a href="http://www.geekpark.net/news/353902" target="_blank" rel="noopener">一根路亚卖出 60 万支，两个门外汉在拼多多圈粉年轻钓鱼佬？</a></h3>
     <div class="meta">（2025-09-12）</div>
     
@@ -267,6 +231,13 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <h2>二、产品与技术创新</h2>
     <div class="grid">
       <article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.theverge.com/news/776667/asus-proart-p16-laptop-creators-nvidia-rtx-5090-4k-price-specs" target="_blank" rel="noopener">Asus gives its $4,000 creator laptop a 4K tandem OLED and RTX 5090</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    <div class="tags">#办公效率</div>
+    <p class="recap">概要：Asus’ ProArt P16 laptop is getting RTX 50-series GPUs and a unique new screen in its high-end configuration.</p>
+    <div class="more"><a href="https://www.theverge.com/news/776667/asus-proart-p16-laptop-creators-nvidia-rtx-5090-4k-price-specs" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
     <h3><a href="https://www.cnet.com/tech/services-and-software/how-to-train-your-dragon-streaming-on-peacock-release-date-and-time/#ftag=CAD590a51e" target="_blank" rel="noopener">'How to Train Your Dragon' Streaming on Peacock: Release Date and Time</a></h3>
     <div class="meta">（2025-09-12）</div>
     <div class="tags">#RAG</div>
@@ -286,6 +257,13 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="tags">#百度 #阿里 #金融</div>
     <p class="recap">概要：外媒报道阿里巴巴、百度开始采用自研芯片训练 AI 模型 《The Information》杂志周四援引四名直接知情人士的消息报道，中国的阿里巴巴和百度已开始使用自主设计的芯片训练其 AI 模型，部分替代了英伟达（NVIDIA）生产的芯片。</p>
     <div class="more"><a href="http://www.geekpark.net/news/353832" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.ithome.com/0/882/493.htm" target="_blank" rel="noopener">Photoshop 又获一 AI 利器，本月将集成谷歌“最强 P 图模型”Nano Banana</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    <div class="tags">#应用落地</div>
+    <p class="recap">概要：IT之家 9 月 12 日消息，Adobe 首席设计推广大使 Howard Pinsky 昨天在 X 平台宣布，谷歌的 Nano Banana 模型将于本月内登陆 Photoshop，很快用户就能够将基于提示词的编辑与 Photoshop 的选区、图层、蒙版等“非破坏性”工具结合起来使用。</p>
+    <div class="more"><a href="https://www.ithome.com/0/882/493.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="二、产品与技术创新">
     <h3><a href="https://www.jiqizhixin.com/articles/2025-09-12-2" target="_blank" rel="noopener">全新MoE架构！阿里开源Qwen3-Next，训练成本直降9成</a></h3>
@@ -466,7 +444,28 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   </article>
     </div>
   </section>
-  </main>
+    </main>
+
+    <!-- 右侧：趋势侧栏 -->
+    <aside class="sidebar" aria-label="Google 趋势（近一周）">
+      <div class="t-card">
+        <div class="t-hd">国外大模型 · 近一周</div>
+        <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-hd">国内大模型 · 近一周</div>
+        <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-hd">国内云厂商 · 近一周</div>
+        <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-hd">AI 市场关键词 · 近一周</div>
+        <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+    </aside>
+  </div>
 </div>
 
 <footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
@@ -494,8 +493,7 @@ function filter(){
   const sec = secSel.value;
   let totalVisible = 0;
 
-  // ✅ 只筛选新闻主区，避免把顶部趋势区隐藏
-  document.querySelectorAll('#main section').forEach(secEl=>{
+  document.querySelectorAll('section').forEach(secEl=>{
     let visible = 0;
     secEl.querySelectorAll('.card').forEach(card=>{
       const inSec = !sec || card.dataset.sec === sec;
@@ -508,7 +506,6 @@ function filter(){
     secEl.classList.toggle('hidden', visible === 0);
   });
 
-  // 空态提示
   emptyEl.classList.toggle('hidden', totalVisible !== 0);
 
   try{
@@ -539,6 +536,7 @@ filter();
       const container = document.getElementById(el);
       if (!container) return;
 
+      // 清掉占位符，避免“加载趋势图…”残留
       container.innerHTML = '';
 
       const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time: TIME }));
