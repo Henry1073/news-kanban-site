@@ -15,8 +15,11 @@ h1{margin:8px 0 4px;font-size:26px;letter-spacing:.5px}
 select,input[type="search"]{padding:9px 12px;border-radius:10px;border:1px solid var(--line);outline:none;min-width:180px;background:#fff}
 input[type="search"]{flex:1 1 280px}
 
-/* 主容器 */
+/* 两栏布局：左新闻 + 右趋势 */
 .wrap{max-width:1200px;margin:0 auto;padding:0 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:18px}
+@media (max-width: 1024px){ .layout{grid-template-columns:1fr;} .sidebar{position:static} }
+.sidebar{position:sticky; top:12px; align-self:start}
 
 /* 板块与卡片 */
 h2{ margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);padding-left:8px }
@@ -41,18 +44,11 @@ section{scroll-margin-top:70px}
 .hidden{display:none!important}
 footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-/* 趋势图顶部 2×2 区 */
-.trends-top{
-  max-width:1200px; margin:0 auto 14px; padding:0 12px;
-  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
-}
-@media (max-width:1024px){
-  .trends-top{ grid-template-columns:1fr; }
-}
+/* 右侧趋势卡片 */
 .t-card{ background:var(--card); border:1px solid var(--line); border-radius:16px;
-  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; }
+  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; margin-bottom:14px; }
 .t-hd{ padding:10px 14px; font-weight:600; border-bottom:1px solid var(--line) }
-.t-body{ height:320px; position:relative; }
+.t-body{ height:320px; position:relative; }   /* ⬅️ 高度改大 */
 .t-fallback{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#9aa0a6; font-size:12px; }
 
 /* 小屏优化 */
@@ -75,30 +71,12 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
 </div>
 
-<!-- 顶部趋势区（2×2） -->
-<section class="trends-top" aria-label="Google 趋势（近一周）" id="trendsTop">
-  <div class="t-card">
-    <div class="t-hd">国外大模型 · 近一周</div>
-    <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-  </div>
-  <div class="t-card">
-    <div class="t-hd">国内大模型 · 近一周</div>
-    <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-  </div>
-  <div class="t-card">
-    <div class="t-hd">国内云厂商 · 近一周</div>
-    <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-  </div>
-  <div class="t-card">
-    <div class="t-hd">AI 市场关键词 · 近一周</div>
-    <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-  </div>
-</section>
-
 <div class="wrap">
-  <main id="main">
-    <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
-    <section id="一、市场与企业动态">
+  <div class="layout">
+    <!-- 左侧：新闻主栏 -->
+    <main id="main">
+      <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
+      <section id="一、市场与企业动态">
     <h2>一、市场与企业动态</h2>
     <div class="grid">
       <article class="card" data-sec="一、市场与企业动态">
@@ -274,6 +252,13 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-12-2" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.qbitai.com/2025/09/330698.html" target="_blank" rel="noopener">央企怎么做超级智能体？对谈中电信天翼AI：自研模型为底座，自主规划是必须，能适应千行百业才行</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    
+    <p class="recap">概要：如何打造央企第一智能体</p>
+    <div class="more"><a href="https://www.qbitai.com/2025/09/330698.html" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
     <h3><a href="https://www.leiphone.com/category/industrynews/I9smFO0azXGskj3z.html" target="_blank" rel="noopener">挑战主流认知！蚂蚁、人大在2025外滩大会发布行业首个原生MoE扩散语言模型</a></h3>
     <div class="meta">（2025-09-12）</div>
     <div class="tags">#MoE</div>
@@ -429,9 +414,44 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     
     <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-12-3" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
+<article class="card" data-sec="七、国际动态">
+    <h3><a href="https://www.qbitai.com/2025/09/330663.html" target="_blank" rel="noopener">外滩大会今年太AI了！王坚暴论：OpenAI确实站在了历史错误的一边</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    <div class="tags">#OpenAI</div>
+    <p class="recap">概要：大佬们今年在外滩大会讲了啥，都在这里了</p>
+    <div class="more"><a href="https://www.qbitai.com/2025/09/330663.html" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="七、国际动态">
+    <h3><a href="https://www.qbitai.com/2025/09/330647.html" target="_blank" rel="noopener">Transformer作者：DeepSeek才有搞头，OpenAI指望不上了</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    <div class="tags">#OpenAI #DeepSeek</div>
+    <p class="recap">概要：“闭源人工智能在阻碍我们探索真正的科学”</p>
+    <div class="more"><a href="https://www.qbitai.com/2025/09/330647.html" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
     </div>
   </section>
-  </main>
+    </main>
+
+    <!-- 右侧：趋势侧栏 -->
+    <aside class="sidebar" aria-label="Google 趋势（近一周）">
+      <div class="t-card">
+        <div class="t-hd">国外大模型 · 近一周</div>
+        <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-hd">国内大模型 · 近一周</div>
+        <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-hd">国内云厂商 · 近一周</div>
+        <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-hd">AI 市场关键词 · 近一周</div>
+        <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+    </aside>
+  </div>
 </div>
 
 <footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
@@ -459,8 +479,7 @@ function filter(){
   const sec = secSel.value;
   let totalVisible = 0;
 
-  // ✅ 只筛选新闻主区，避免把顶部趋势区隐藏
-  document.querySelectorAll('#main section').forEach(secEl=>{
+  document.querySelectorAll('section').forEach(secEl=>{
     let visible = 0;
     secEl.querySelectorAll('.card').forEach(card=>{
       const inSec = !sec || card.dataset.sec === sec;
@@ -473,7 +492,6 @@ function filter(){
     secEl.classList.toggle('hidden', visible === 0);
   });
 
-  // 空态提示
   emptyEl.classList.toggle('hidden', totalVisible !== 0);
 
   try{
@@ -504,6 +522,7 @@ filter();
       const container = document.getElementById(el);
       if (!container) return;
 
+      // 清掉占位符，避免“加载趋势图…”残留
       container.innerHTML = '';
 
       const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time: TIME }));
