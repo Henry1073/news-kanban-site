@@ -15,8 +15,11 @@ h1{margin:8px 0 4px;font-size:26px;letter-spacing:.5px}
 select,input[type="search"]{padding:9px 12px;border-radius:10px;border:1px solid var(--line);outline:none;min-width:180px;background:#fff}
 input[type="search"]{flex:1 1 280px}
 
-/* 布局 */
+/* 两栏布局：左新闻 + 右趋势 */
 .wrap{max-width:1200px;margin:0 auto;padding:0 12px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:18px}
+@media (max-width: 1024px){ .layout{grid-template-columns:1fr;} .sidebar{position:static} }
+.sidebar{position:sticky; top:12px; align-self:start}
 
 /* 板块与卡片 */
 h2{ margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);padding-left:8px }
@@ -41,18 +44,11 @@ section{scroll-margin-top:70px}
 .hidden{display:none!important}
 footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-/* 趋势图顶部 2×2 区 */
-.trends-top{
-  max-width:1200px; margin:0 auto 14px; padding:0 12px;
-  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
-}
-@media (max-width:1024px){
-  .trends-top{ grid-template-columns:1fr; }
-}
+/* 右侧趋势卡片 */
 .t-card{ background:var(--card); border:1px solid var(--line); border-radius:16px;
-  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; }
+  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; margin-bottom:14px; }
 .t-hd{ padding:10px 14px; font-weight:600; border-bottom:1px solid var(--line) }
-.t-body{ height:320px; position:relative; }
+.t-body{ height:320px; position:relative; }   /* ⬅️ 高度改大 */
 .t-fallback{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#9aa0a6; font-size:12px; }
 
 /* 小屏优化 */
@@ -75,30 +71,12 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
 </div>
 
-<!-- 顶部趋势区 -->
-<section class="trends-top" aria-label="Google 趋势（近一周）">
-  <div class="t-card">
-    <div class="t-hd">国外大模型 · 近一周</div>
-    <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-  </div>
-  <div class="t-card">
-    <div class="t-hd">国内大模型 · 近一周</div>
-    <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-  </div>
-  <div class="t-card">
-    <div class="t-hd">国内云厂商 · 近一周</div>
-    <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-  </div>
-  <div class="t-card">
-    <div class="t-hd">AI 市场关键词 · 近一周</div>
-    <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-  </div>
-</section>
-
 <div class="wrap">
-  <main id="main">
-    <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
-    <section id="一、市场与企业动态">
+  <div class="layout">
+    <!-- 左侧：新闻主栏 -->
+    <main id="main">
+      <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
+      <section id="一、市场与企业动态">
     <h2>一、市场与企业动态</h2>
     <div class="grid">
       <article class="card" data-sec="一、市场与企业动态">
@@ -107,6 +85,13 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     
     <p class="recap">概要：The Federal Trade Commission said it was starting an inquiry of how six major tech companies monitor activity that could harm minors.</p>
     <div class="more"><a href="https://www.nytimes.com/2025/09/11/technology/google-meta-chatgpt-ai-chatbots.html" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="https://www.bloomberg.com/news/articles/2025-09-12/meituan-launches-ai-agent-to-boost-food-delivery-business" target="_blank" rel="noopener">Meituan Launches AI Agent to Boost Food Delivery Business</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    <div class="tags">#Agent</div>
+    <p class="recap">概要：Meituan has launched a new AI agent app that aims to boost its food delivery and local services business, as its battle with Alibaba Group Holding Ltd.</p>
+    <div class="more"><a href="https://www.bloomberg.com/news/articles/2025-09-12/meituan-launches-ai-agent-to-boost-food-delivery-business" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="一、市场与企业动态">
     <h3><a href="https://www.bloomberg.com/news/newsletters/2025-09-11/databricks-ceo-says-companies-erred-with-focus-on-chatbots-galore" target="_blank" rel="noopener">Databricks CEO Says Companies Erred With Focus on ‘Chatbots Galore’</a></h3>
@@ -170,6 +155,20 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="tags">#xAI</div>
     <p class="recap">概要：Grok has once again been caught spreading blatant misinformation on X.</p>
     <div class="more"><a href="https://www.engadget.com/ai/grok-claimed-the-charlie-kirk-assassination-video-was-a-meme-edit-175640641.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="https://www.tmtpost.com/7691602.html" target="_blank" rel="noopener">AI Agents Could Replace Apps Entirely, Says Ant Group CEO</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    
+    <p class="recap">概要：Zhu Xiaohu said that startups in the AI era are fundamentally no different from those in the PC or mobile internet eras.</p>
+    <div class="more"><a href="https://www.tmtpost.com/7691602.html" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="https://www.ithome.com/0/882/423.htm" target="_blank" rel="noopener">福布斯中国发布 2025 中国 ESG 50 强：阿里巴巴、比亚迪、小米、腾讯等在列</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    <div class="tags">#阿里 #腾讯</div>
+    <p class="recap">概要：IT之家 9 月 12 日消息，昨日，福布斯中国发布 2025 中国 ESG 50 强。今年，ESG 50 榜单依旧从 2025 年福布斯全球 2000 强榜单中遴选 50 家在合规与创新、全球化与本土化中实现突破的中国企业，同时从近百个案例中甄选 10 个参考样本。</p>
+    <div class="more"><a href="https://www.ithome.com/0/882/423.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="一、市场与企业动态">
     <h3><a href="https://www.ithome.com/0/882/379.htm" target="_blank" rel="noopener">微信 AI 搜索进入一级入口，可选择深度思考、上传图片等</a></h3>
@@ -239,18 +238,18 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="https://www.ithome.com/0/882/327.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.ithome.com/0/882/311.htm" target="_blank" rel="noopener">阿里云发布通义 Qwen3-Next 基础模型架构并开源 80B-A3B 系列：改进混合注意力机制、高稀疏度 MoE 结构</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#阿里 #MoE</div>
-    <p class="recap">概要：IT之家 9 月 12 日消息，阿里云通义团队今日宣布推出其下一代基础模型架构 Qwen3-Next，并开源了基于该架构的 Qwen3-Next-80B-A3B 系列模型（Instruct 与 Thinking）。</p>
-    <div class="more"><a href="https://www.ithome.com/0/882/311.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
     <h3><a href="https://www.jiqizhixin.com/articles/2025-09-12-2" target="_blank" rel="noopener">全新MoE架构！阿里开源Qwen3-Next，训练成本直降9成</a></h3>
     <div class="meta">（2025-09-12）</div>
     <div class="tags">#阿里 #MoE</div>
     
     <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-12-2" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.leiphone.com/category/industrynews/lkwGjOnBOJIVcgKY.html" target="_blank" rel="noopener">阿里开源下一代模型架构Qwen3-Next，模型训练及推理性价比创新高</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    <div class="tags">#阿里</div>
+    <p class="recap">概要：9月12日，阿里通义发布下一代基础模型架构Qwen3-Next。Qwen3-Next针对大模型在上下文长度和总参数两方面不断扩展（Scaling）的未来趋势而设计，采用全新的高稀疏MoE架构，并对经典Transformer核心组件进行了重构，创新线性注意力和自研的门控注意力结合的混合注意力机制，实现了模型训练和推理的双重性价比突破。</p>
+    <div class="more"><a href="https://www.leiphone.com/category/industrynews/lkwGjOnBOJIVcgKY.html" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
     </div>
   </section><section id="三、投融资与资本市场">
@@ -262,13 +261,6 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="tags">#OpenAI #Microsoft #投融资</div>
     <p class="recap">概要：Microsoft Chairman and Chief Executive Officer Satya Nadella (L), speaks with OpenAI Chief Executive Officer Sam Altman, who joined by video during the Microsoft Build 2025, conference in…</p>
     <div class="more"><a href="https://www.theverge.com/news/776884/openai-microsoft-mou" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="三、投融资与资本市场">
-    <h3><a href="https://www.ithome.com/0/882/310.htm" target="_blank" rel="noopener">OpenAI 与微软签署非约束性协议：允许将营利部门转型公益股份公司，估值或超 1000 亿美元</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#OpenAI #投融资</div>
-    <p class="recap">概要：IT之家 9 月 12 日消息，当地时间周四，OpenAI 宣布与其最大投资方微软达成一份非约束性谅解备忘录（MOU），开启下一阶段的合作，并就修订后的合作关系达成一致。 根据协议，OpenAI 计划将其营利性部门转型为公益公司（Public Benefit Corporation，PBC）。</p>
-    <div class="more"><a href="https://www.ithome.com/0/882/310.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
     </div>
   </section><section id="四、应用与落地案例">
@@ -374,18 +366,18 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="https://www.zdnet.com/article/i-tested-the-best-apple-and-samsung-smartwatches-right-now-heres-who-wins/" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="七、国际动态">
+    <h3><a href="https://www.engadget.com/ai/microsoft-and-openai-announce-the-next-phase-of-their-partnership-035247037.html?src=rss" target="_blank" rel="noopener">Microsoft and OpenAI announce the 'next phase' of their partnership</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    <div class="tags">#OpenAI #Microsoft</div>
+    <p class="recap">概要：Microsoft and OpenAI have issued a joint statement to say that they have signed a non-binding memorandum of understanding for the &quot;next phase&quot; of their partnership.</p>
+    <div class="more"><a href="https://www.engadget.com/ai/microsoft-and-openai-announce-the-next-phase-of-their-partnership-035247037.html?src=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="七、国际动态">
     <h3><a href="https://www.ithome.com/0/882/333.htm" target="_blank" rel="noopener">腾讯辟谣“前 OpenAI 姚顺雨上亿薪资入职腾讯”</a></h3>
     <div class="meta">（2025-09-12）</div>
     <div class="tags">#OpenAI #腾讯</div>
     <p class="recap">概要：IT之家 9 月 12 日消息，腾讯官方公众号“鹅厂黑板报”今天一早发布一条辟谣信息，“前 OpenAI 姚顺雨上亿薪资入职腾讯”的报道被打上“谣言”标签。 IT之家查询获悉，姚顺雨本科毕业于清华大学姚班，获普林斯顿大学计算机科学博士学位，2024 年加入 OpenAI 并参与智能体产品 operator 与 deep research 开发 。</p>
     <div class="more"><a href="https://www.ithome.com/0/882/333.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="七、国际动态">
-    <h3><a href="https://www.ithome.com/0/882/320.htm" target="_blank" rel="noopener">OpenAI 奥尔特曼与马斯克诉讼升级，围绕证人证据持续交锋</a></h3>
-    <div class="meta">（2025-09-12）</div>
-    <div class="tags">#OpenAI</div>
-    <p class="recap">概要：IT之家 9 月 12 日消息，OpenAI 首席执行官萨姆・奥尔特曼（Sam Altman）向美国联邦法院提出申请，希望法院强制埃隆・马斯克的两位核心商业伙伴 —— 财富管理人贾里德・伯查尔（Jared Birchall）和 Neuralink 运营总监希冯・齐利斯（Shivon Zilis）—— 在 72 小时内交出与案件相关的短信和邮件。</p>
-    <div class="more"><a href="https://www.ithome.com/0/882/320.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="七、国际动态">
     <h3><a href="https://www.jiqizhixin.com/articles/2025-09-12-3" target="_blank" rel="noopener">姚顺雨离职OpenAI，「亿元入职腾讯」传闻引爆AI圈，鹅厂辟谣了</a></h3>
@@ -394,9 +386,44 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     
     <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-12-3" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
+<article class="card" data-sec="七、国际动态">
+    <h3><a href="https://www.qbitai.com/2025/09/330663.html" target="_blank" rel="noopener">外滩大会今年太AI了！王坚暴论：OpenAI确实站在了历史错误的一边</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    <div class="tags">#OpenAI</div>
+    <p class="recap">概要：大佬们今年在外滩大会讲了啥，都在这里了</p>
+    <div class="more"><a href="https://www.qbitai.com/2025/09/330663.html" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="七、国际动态">
+    <h3><a href="https://www.qbitai.com/2025/09/330647.html" target="_blank" rel="noopener">Transformer作者：DeepSeek才有搞头，OpenAI指望不上了</a></h3>
+    <div class="meta">（2025-09-12）</div>
+    <div class="tags">#OpenAI #DeepSeek</div>
+    <p class="recap">概要：“闭源人工智能在阻碍我们探索真正的科学”</p>
+    <div class="more"><a href="https://www.qbitai.com/2025/09/330647.html" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
     </div>
   </section>
-  </main>
+    </main>
+
+    <!-- 右侧：趋势侧栏 -->
+    <aside class="sidebar" aria-label="Google 趋势（近一周）">
+      <div class="t-card">
+        <div class="t-hd">国外大模型 · 近一周</div>
+        <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-hd">国内大模型 · 近一周</div>
+        <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-hd">国内云厂商 · 近一周</div>
+        <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-hd">AI 市场关键词 · 近一周</div>
+        <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+      </div>
+    </aside>
+  </div>
 </div>
 
 <footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
@@ -467,6 +494,7 @@ filter();
       const container = document.getElementById(el);
       if (!container) return;
 
+      // 清掉占位符，避免“加载趋势图…”残留
       container.innerHTML = '';
 
       const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time: TIME }));
