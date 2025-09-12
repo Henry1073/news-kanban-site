@@ -15,19 +15,8 @@ h1{margin:8px 0 4px;font-size:26px;letter-spacing:.5px}
 select,input[type="search"]{padding:9px 12px;border-radius:10px;border:1px solid var(--line);outline:none;min-width:180px;background:#fff}
 input[type="search"]{flex:1 1 280px}
 
-/* 两栏布局：左新闻 + 右趋势 */
+/* 布局 */
 .wrap{max-width:1200px;margin:0 auto;padding:0 12px 40px}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:18px}
-@media (max-width: 1024px){ .layout{grid-template-columns:1fr;} .sidebar{position:static} }
-/* === 仅此处有改动：右侧栏吸顶 + 内部可滚动 === */
-.sidebar{
-  position:sticky; top:12px; align-self:start;
-  max-height: calc(100vh - 24px);   /* 视口高度内滚动 */
-  overflow: auto;                   /* 关键：在侧栏内部滚动 */
-  padding-right: 2px;               /* 让滚动条不压住内容 */
-}
-.sidebar::-webkit-scrollbar{ width:6px }
-.sidebar::-webkit-scrollbar-thumb{ background: rgba(100,116,139,.35); border-radius:4px }
 
 /* 板块与卡片 */
 h2{ margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);padding-left:8px }
@@ -52,9 +41,16 @@ section{scroll-margin-top:70px}
 .hidden{display:none!important}
 footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-/* 右侧趋势卡片 */
+/* 趋势图顶部 2×2 区 */
+.trends-top{
+  max-width:1200px; margin:0 auto 14px; padding:0 12px;
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
+}
+@media (max-width:1024px){
+  .trends-top{ grid-template-columns:1fr; }
+}
 .t-card{ background:var(--card); border:1px solid var(--line); border-radius:16px;
-  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; margin-bottom:14px; }
+  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; }
 .t-hd{ padding:10px 14px; font-weight:600; border-bottom:1px solid var(--line) }
 .t-body{ height:320px; position:relative; }
 .t-fallback{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#9aa0a6; font-size:12px; }
@@ -79,12 +75,30 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
 </div>
 
+<!-- 顶部趋势区 -->
+<section class="trends-top" aria-label="Google 趋势（近一周）">
+  <div class="t-card">
+    <div class="t-hd">国外大模型 · 近一周</div>
+    <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+  </div>
+  <div class="t-card">
+    <div class="t-hd">国内大模型 · 近一周</div>
+    <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+  </div>
+  <div class="t-card">
+    <div class="t-hd">国内云厂商 · 近一周</div>
+    <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+  </div>
+  <div class="t-card">
+    <div class="t-hd">AI 市场关键词 · 近一周</div>
+    <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+  </div>
+</section>
+
 <div class="wrap">
-  <div class="layout">
-    <!-- 左侧：新闻主栏 -->
-    <main id="main">
-      <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
-      <section id="一、市场与企业动态">
+  <main id="main">
+    <p id="emptyHint" class="hidden">当前筛选无结果，换个关键词试试～</p>
+    <section id="一、市场与企业动态">
     <h2>一、市场与企业动态</h2>
     <div class="grid">
       <article class="card" data-sec="一、市场与企业动态">
@@ -382,28 +396,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   </article>
     </div>
   </section>
-    </main>
-
-    <!-- 右侧：趋势侧栏 -->
-    <aside class="sidebar" aria-label="Google 趋势（近一周）">
-      <div class="t-card">
-        <div class="t-hd">国外大模型 · 近一周</div>
-        <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-      </div>
-      <div class="t-card">
-        <div class="t-hd">国内大模型 · 近一周</div>
-        <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-      </div>
-      <div class="t-card">
-        <div class="t-hd">国内云厂商 · 近一周</div>
-        <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-      </div>
-      <div class="t-card">
-        <div class="t-hd">AI 市场关键词 · 近一周</div>
-        <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
-      </div>
-    </aside>
-  </div>
+  </main>
 </div>
 
 <footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
@@ -474,7 +467,6 @@ filter();
       const container = document.getElementById(el);
       if (!container) return;
 
-      // 清掉占位符，避免“加载趋势图…”残留
       container.innerHTML = '';
 
       const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time: TIME }));
