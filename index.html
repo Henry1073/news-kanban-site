@@ -47,14 +47,13 @@ section{scroll-margin-top:70px}
 .hidden{display:none!important}
 footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-/* ===== 趋势图 · 高颜值容器样式 ===== */
+/* ===== 趋势图 · 容器样式（裁掉底部边线，避免“插到边”） ===== */
 .trends-top{
   max-width:1200px; margin:4px auto 16px; padding:0 12px;
   display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px;
 }
 @media (max-width:1024px){ .trends-top{ grid-template-columns:1fr; } }
 
-/* 卡片 */
 .t-card{
   background:var(--card);
   border:1px solid var(--line);
@@ -65,7 +64,6 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
 }
 .t-card:hover{ transform:translateY(-4px); box-shadow:0 12px 28px rgba(16,18,19,.10); }
 
-/* 头部 */
 .t-hd{
   display:flex; align-items:center; justify-content:space-between;
   padding:12px 14px; font-weight:650; font-size:15px;
@@ -74,24 +72,34 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
 }
 .t-title{display:flex; gap:8px; align-items:center}
 .t-dot{width:8px;height:8px;border-radius:999px;background:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
-.t-note{color:#9aa0a6;font-size:12px}
-
-/* 工具栏（时间范围切换） */
 .t-tools{display:flex;align-items:center;gap:8px}
 .t-sel{
   border:1px solid var(--line); border-radius:10px; padding:6px 10px; background:#fff;
   color:#374151; font-size:12px; outline:none;
 }
 
-/* 主体与 iframe */
-.t-body{ height:340px; position:relative; padding:10px 12px; }
-.t-body iframe{
-  width:100%; height:100%;
-  border:0; border-radius:14px;
-  filter:saturate(1.08) contrast(1.05); /* 轻度视觉增强 */
+/* 主体：用 .t-embed 作为 iframe 包裹层，裁切四周并留出内边距 */
+.t-body{ height:340px; position:relative; }
+.t-embed{
+  position:absolute;
+  inset:10px 12px;           /* 与卡片边缘留白，和骨架一致 */
+  box-sizing:border-box;
+  padding:0;                 /* 这里不再额外加 padding，由 iframe 自身位移来裁掉底边线 */
+  border-radius:14px;
+  background:#fff;
+  overflow:hidden;           /* ⭐ 关键：裁掉内部边界（尤其是底部“直线”） */
+}
+/* Trends 注入的 iframe：扩高并上移一点点，把底部边线裁掉；再统一轻度滤镜增强 */
+.t-embed iframe{
+  width:100%;
+  height:105%;
+  margin-top:-5%;
+  border:0;
+  border-radius:12px;
+  filter:saturate(1.06) contrast(1.04);
 }
 
-/* 骨架屏 */
+/* 骨架屏（尺寸与 .t-embed 对齐） */
 .t-fallback{
   position:absolute; inset:10px 12px;
   border-radius:14px; overflow:hidden;
@@ -122,7 +130,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
 </div>
 
-<!-- 顶部趋势区（美化 + 时间范围切换） -->
+<!-- 顶部趋势区（裁掉底边线 + 时间范围切换） -->
 <section class="trends-top" aria-label="Google 趋势">
   <div class="t-card">
     <div class="t-hd">
@@ -133,7 +141,10 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
         <option value="today 12-m">近 12 个月</option>
       </select></div>
     </div>
-    <div class="t-body"><div id="gt-foreign" class="t-embed"></div><div class="t-fallback">加载趋势图…</div></div>
+    <div class="t-body">
+      <div id="gt-foreign" class="t-embed"></div>
+      <div class="t-fallback">加载趋势图…</div>
+    </div>
   </div>
 
   <div class="t-card">
@@ -145,7 +156,10 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
         <option value="today 12-m">近 12 个月</option>
       </select></div>
     </div>
-    <div class="t-body"><div id="gt-domestic" class="t-embed"></div><div class="t-fallback">加载趋势图…</div></div>
+    <div class="t-body">
+      <div id="gt-domestic" class="t-embed"></div>
+      <div class="t-fallback">加载趋势图…</div>
+    </div>
   </div>
 
   <div class="t-card">
@@ -157,7 +171,10 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
         <option value="today 12-m">近 12 个月</option>
       </select></div>
     </div>
-    <div class="t-body"><div id="gt-vendors" class="t-embed"></div><div class="t-fallback">加载趋势图…</div></div>
+    <div class="t-body">
+      <div id="gt-vendors" class="t-embed"></div>
+      <div class="t-fallback">加载趋势图…</div>
+    </div>
   </div>
 
   <div class="t-card">
@@ -169,7 +186,10 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
         <option value="today 12-m">近 12 个月</option>
       </select></div>
     </div>
-    <div class="t-body"><div id="gt-market" class="t-embed"></div><div class="t-fallback">加载趋势图…</div></div>
+    <div class="t-body">
+      <div id="gt-market" class="t-embed"></div>
+      <div class="t-fallback">加载趋势图…</div>
+    </div>
   </div>
 </section>
 
@@ -191,13 +211,6 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <h2>二、产品与技术创新</h2>
     <div class="grid">
       <article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.jiqizhixin.com/articles/2025-09-22" target="_blank" rel="noopener">EMNLP2025 | SFT与RL的结合，vivo AI Lab提出新的后训练方法</a></h3>
-    <div class="meta">（2025-09-22）</div>
-    <div class="tags">#模型训练</div>
-    
-    <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-22" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
     <h3><a href="https://36kr.com/p/3477355243707016?f=rss" target="_blank" rel="noopener">燃！好燃的AI芯片盛会，大模型时代国产化希望丛生</a></h3>
     <div class="meta">（2025-09-22）</div>
     <div class="tags">#LLM #算力</div>
@@ -205,25 +218,18 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="https://36kr.com/p/3477355243707016?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.ithome.com/0/884/852.htm" target="_blank" rel="noopener">字节跳动推出豆包翻译大模型：支持 28 种语言互译，性能比肩 GPT-4o</a></h3>
+    <div class="meta">（2025-09-22）</div>
+    <div class="tags">#字节跳动 #LLM</div>
+    <p class="recap">概要：IT之家 9 月 22 日消息，字节跳动旗下火山引擎近日发布了其全新的通用翻译大模型 ——Doubao-Seed-Translation（豆包翻译模型），该模型支持 28 种语言互译，覆盖中、英、日、韩、德、法、西、俄等主流语种。</p>
+    <div class="more"><a href="https://www.ithome.com/0/884/852.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
     <h3><a href="https://www.ithome.com/0/884/801.htm" target="_blank" rel="noopener">美团发布高效推理模型 LongCat-Flash-Thinking，达到 SOTA 水平</a></h3>
     <div class="meta">（2025-09-22）</div>
     <div class="tags">#推理</div>
     <p class="recap">概要：IT之家 9 月 22 日消息，今日，美团 LongCat 团队正式发布全新高效推理模型 LongCat-Flash-Thinking。 官方介绍称，在保持了 LongCat-Flash-Chat 极致速度的同时，全新发布的 LongCat-Flash-Thinking 更强大、更专业。</p>
     <div class="more"><a href="https://www.ithome.com/0/884/801.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.jiqizhixin.com/articles/2025-09-22-4" target="_blank" rel="noopener">LeCun力荐的JEPA杀入LLM，用CV的思路训练LLM，性能鲁棒性双丰收</a></h3>
-    <div class="meta">（2025-09-22）</div>
-    <div class="tags">#LLM</div>
-    
-    <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-22-4" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.qbitai.com/2025/09/334835.html" target="_blank" rel="noopener">基于华为云Token服务的稿定AI上线，一站式解决设计难题</a></h3>
-    <div class="meta">（2025-09-22）</div>
-    <div class="tags">#华为 #LLM #多模态</div>
-    <p class="recap">概要：经过华为云深度优化，“稿定AI”大幅提升多模态大模型生成速度，持续优化用户体验。其中文生图大模型提速2倍，文生视频/图生视频大模型提速3.5倍。</p>
-    <div class="more"><a href="https://www.qbitai.com/2025/09/334835.html" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
     </div>
   </section><section id="四、应用与落地案例">
@@ -291,7 +297,6 @@ function filter(){
     secEl.classList.toggle('hidden', visible === 0);
   });
 
-  // 空态提示
   emptyEl.classList.toggle('hidden', totalVisible !== 0);
 
   try{
@@ -305,7 +310,7 @@ secSel.addEventListener('change', filter);
 search.addEventListener('input', run);
 filter();
 
-/* ===== Google Trends 官方 embed（支持时间范围切换；修复骨架遮挡） ===== */
+/* ===== Google Trends 官方 embed（时间切换 + 骨架控制 + 裁边） ===== */
 (function mountTrends(){
   const SCRIPT = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
 
@@ -351,14 +356,13 @@ filter();
   function boot(){
     if (!(window.trends && window.trends.embed)) return;
 
-    // 初始渲染（默认近 7 天）
     const defaultTime = 'now 7-d';
     renderOne(cfg.foreign,  defaultTime);
     renderOne(cfg.domestic, defaultTime);
     renderOne(cfg.vendors,  defaultTime);
     renderOne(cfg.market,   defaultTime);
 
-    // 监听每张卡片右上的时间选择
+    // 时间范围切换
     document.querySelectorAll('.t-sel').forEach(sel=>{
       sel.addEventListener('change', ()=>{
         const time = sel.value || 'now 7-d';
