@@ -3,7 +3,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI 大模型新闻看板（2025-09-22）</title>
 <style>
-:root{ --fg:#111; --sub:#666; --bg:#f7f7f8; --card:#fff; --line:#e8e8ee; --accent:#0a7; }
+:root{
+  --fg:#101213; --sub:#6b7280; --bg:#f6f7fa; --card:#ffffff; --line:#edf0f5; --accent:#4f46e5;
+}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,PingFang SC,Arial}
 
@@ -41,24 +43,66 @@ section{scroll-margin-top:70px}
 .hidden{display:none!important}
 footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-/* 趋势图顶部 2×2 区 */
+/* ===== 趋势图 · 高颜值容器样式 ===== */
 .trends-top{
-  max-width:1200px; margin:0 auto 14px; padding:0 12px;
-  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
+  max-width:1200px; margin:4px auto 16px; padding:0 12px;
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px;
 }
-@media (max-width:1024px){
-  .trends-top{ grid-template-columns:1fr; }
+@media (max-width:1024px){ .trends-top{ grid-template-columns:1fr; } }
+
+/* 卡片 */
+.t-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:0 8px 24px rgba(16,18,19,.06);
+  overflow:hidden;
+  transition:transform .22s ease, box-shadow .22s ease;
 }
-.t-card{ background:var(--card); border:1px solid var(--line); border-radius:16px;
-  box-shadow:0 1px 8px rgba(0,0,0,.04); overflow:hidden; }
-.t-hd{ padding:10px 14px; font-weight:600; border-bottom:1px solid var(--line) }
-.t-body{ height:320px; position:relative; }
-.t-fallback{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#9aa0a6; font-size:12px; }
+.t-card:hover{ transform:translateY(-4px); box-shadow:0 12px 28px rgba(16,18,19,.10); }
+
+/* 头部 */
+.t-hd{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 14px; font-weight:650; font-size:15px;
+  background:linear-gradient(90deg,#fff, #fafbff);
+  border-bottom:1px solid var(--line);
+}
+.t-title{display:flex; gap:8px; align-items:center}
+.t-dot{width:8px;height:8px;border-radius:999px;background:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+.t-note{color:#9aa0a6;font-size:12px}
+
+/* 工具栏（时间范围切换） */
+.t-tools{display:flex;align-items:center;gap:8px}
+.t-sel{
+  border:1px solid var(--line); border-radius:10px; padding:6px 10px; background:#fff;
+  color:#374151; font-size:12px; outline:none;
+}
+
+/* 主体与 iframe */
+.t-body{ height:340px; position:relative; padding:10px 12px; }
+.t-body iframe{
+  width:100%; height:100%;
+  border:0; border-radius:14px;
+  /* 轻度视觉增强（不改变图的样式，只增强观感） */
+  filter:saturate(1.08) contrast(1.05);
+}
+
+/* 骨架屏 */
+.t-fallback{
+  position:absolute; inset:10px 12px;
+  border-radius:14px; overflow:hidden;
+  background:linear-gradient(90deg,#f6f7f9 25%,#eef1f6 37%,#f6f7f9 63%);
+  background-size:400% 100%; animation:t-shimmer 1.4s ease infinite;
+  color:#9aa0a6; display:flex; align-items:center; justify-content:center; font-size:12px;
+}
+@keyframes t-shimmer{ 0%{background-position:100% 0} 100%{background-position:-100% 0} }
 
 /* 小屏优化 */
 @media (max-width:480px){
   h1{font-size:22px}
   h2{font-size:18px}
+  .t-body{height:300px}
 }
 </style>
 
@@ -75,23 +119,54 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
 </div>
 
-<!-- 顶部趋势区（2×2） -->
-<section class="trends-top" aria-label="Google 趋势（近一周）" id="trendsTop">
+<!-- 顶部趋势区（美化 + 时间范围切换） -->
+<section class="trends-top" aria-label="Google 趋势">
   <div class="t-card">
-    <div class="t-hd">国外大模型 · 近一周</div>
-    <div id="gt-foreign" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+    <div class="t-hd">
+      <div class="t-title"><span class="t-dot"></span><span>🌍 国外大模型 · 趋势</span></div>
+      <div class="t-tools"><select class="t-sel" data-target="gt-foreign" aria-label="时间范围">
+        <option value="now 7-d" selected>近 7 天</option>
+        <option value="today 3-m">近 90 天</option>
+        <option value="today 12-m">近 12 个月</option>
+      </select></div>
+    </div>
+    <div class="t-body"><div id="gt-foreign" class="t-embed"></div><div class="t-fallback">加载趋势图…</div></div>
   </div>
+
   <div class="t-card">
-    <div class="t-hd">国内大模型 · 近一周</div>
-    <div id="gt-domestic" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+    <div class="t-hd">
+      <div class="t-title"><span class="t-dot"></span><span>🇨🇳 国内大模型 · 趋势</span></div>
+      <div class="t-tools"><select class="t-sel" data-target="gt-domestic" aria-label="时间范围">
+        <option value="now 7-d" selected>近 7 天</option>
+        <option value="today 3-m">近 90 天</option>
+        <option value="today 12-m">近 12 个月</option>
+      </select></div>
+    </div>
+    <div class="t-body"><div id="gt-domestic" class="t-embed"></div><div class="t-fallback">加载趋势图…</div></div>
   </div>
+
   <div class="t-card">
-    <div class="t-hd">国内云厂商 · 近一周</div>
-    <div id="gt-vendors" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+    <div class="t-hd">
+      <div class="t-title"><span class="t-dot"></span><span>☁️ 国内云厂商 · 趋势</span></div>
+      <div class="t-tools"><select class="t-sel" data-target="gt-vendors" aria-label="时间范围">
+        <option value="now 7-d" selected>近 7 天</option>
+        <option value="today 3-m">近 90 天</option>
+        <option value="today 12-m">近 12 个月</option>
+      </select></div>
+    </div>
+    <div class="t-body"><div id="gt-vendors" class="t-embed"></div><div class="t-fallback">加载趋势图…</div></div>
   </div>
+
   <div class="t-card">
-    <div class="t-hd">AI 市场关键词 · 近一周</div>
-    <div id="gt-market" class="t-body"><div class="t-fallback">加载趋势图…</div></div>
+    <div class="t-hd">
+      <div class="t-title"><span class="t-dot"></span><span>🔑 AI 市场关键词 · 趋势</span></div>
+      <div class="t-tools"><select class="t-sel" data-target="gt-market" aria-label="时间范围">
+        <option value="now 7-d" selected>近 7 天</option>
+        <option value="today 3-m">近 90 天</option>
+        <option value="today 12-m">近 12 个月</option>
+      </select></div>
+    </div>
+    <div class="t-body"><div id="gt-market" class="t-embed"></div><div class="t-fallback">加载趋势图…</div></div>
   </div>
 </section>
 
@@ -102,11 +177,11 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <h2>一、市场与企业动态</h2>
     <div class="grid">
       <article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="https://36kr.com/newsflashes/3477219594590857?f=rss" target="_blank" rel="noopener">OpenAI或与立讯精密合作开发消费级硬件设备</a></h3>
+    <h3><a href="https://www.ithome.com/0/884/810.htm" target="_blank" rel="noopener">积极扩展内容 AI 授权：消息称 Meta 正与施普林格、福克斯、新闻集团谈判</a></h3>
     <div class="meta">（2025-09-22）</div>
-    <div class="tags">#OpenAI</div>
-    <p class="recap">概要：据The Information报道，近日，OpenAI已与苹果公司的设备组装商立讯精密签署协议，共同打造一款消费级设备。该款设备目前仍处于原型开发阶段，预计能与OpenAI的人工智能模型深度协作。值得注意的是，立讯精密可能并非唯一参与其中的苹果供应商。</p>
-    <div class="more"><a href="https://36kr.com/newsflashes/3477219594590857?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+    <div class="tags">#Meta</div>
+    <p class="recap">概要：IT之家 9 月 22 日消息，《华尔街日报》当地时间 18 日报道称，Meta 为用于 AI 产品的内容许可近几个月来与施普林格、福克斯、新闻集团等媒体内容巨头展开了磋商。 由于事实核查监管、收入分享机制等原因，这同时持有 Facebook、Instagram、Thread 的社媒巨头最近几年一度减少了对其社交平台上新闻内容展示与付费授权交易的关注。</p>
+    <div class="more"><a href="https://www.ithome.com/0/884/810.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
     </div>
   </section><section id="二、产品与技术创新">
@@ -120,35 +195,35 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-22" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="二、产品与技术创新">
-    <h3><a href="https://www.qbitai.com/2025/09/334835.html" target="_blank" rel="noopener">基于华为云Token服务的稿定AI上线，一站式解决设计难题</a></h3>
+    <h3><a href="https://36kr.com/p/3477355243707016?f=rss" target="_blank" rel="noopener">燃！好燃的AI芯片盛会，大模型时代国产化希望丛生</a></h3>
     <div class="meta">（2025-09-22）</div>
-    <div class="tags">#华为 #LLM #多模态</div>
-    <p class="recap">概要：经过华为云深度优化，“稿定AI”大幅提升多模态大模型生成速度，持续优化用户体验。其中文生图大模型提速2倍，文生视频/图生视频大模型提速3.5倍。</p>
-    <div class="more"><a href="https://www.qbitai.com/2025/09/334835.html" target="_blank" rel="noopener">阅读原文 →</a></div>
+    <div class="tags">#LLM #算力</div>
+    <p class="recap">概要：芯东西9月17日报道，今日，2025全球AI芯片峰会在上海举行，来自AI芯片领域的42位产学研专家及创业先锋代表，畅谈对大模型下半场中国AI芯片创新、落地、生存、破局的最新观察与思考。 一如既往，大会将国产AI芯片新老势力、核心生态链企业、投资机构代表汇聚一堂，集中输出技术及产业干货，全景式解构AI芯片热门发展方向。</p>
+    <div class="more"><a href="https://36kr.com/p/3477355243707016?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.ithome.com/0/884/801.htm" target="_blank" rel="noopener">美团发布高效推理模型 LongCat-Flash-Thinking，达到 SOTA 水平</a></h3>
+    <div class="meta">（2025-09-22）</div>
+    <div class="tags">#推理</div>
+    <p class="recap">概要：IT之家 9 月 22 日消息，今日，美团 LongCat 团队正式发布全新高效推理模型 LongCat-Flash-Thinking。 官方介绍称，在保持了 LongCat-Flash-Chat 极致速度的同时，全新发布的 LongCat-Flash-Thinking 更强大、更专业。</p>
+    <div class="more"><a href="https://www.ithome.com/0/884/801.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
     </div>
   </section><section id="四、应用与落地案例">
     <h2>四、应用与落地案例</h2>
     <div class="grid">
       <article class="card" data-sec="四、应用与落地案例">
-    <h3><a href="https://www.ithome.com/0/884/690.htm" target="_blank" rel="noopener">华为云计算 CEO 张平安：鲲鹏云服务年增 67%，兼容应用超 2.5 万个</a></h3>
+    <h3><a href="https://www.tmtpost.com/7701612.html" target="_blank" rel="noopener">OpenAI 与 Luxshare Precision 合作打造创新型人工智能设备</a></h3>
     <div class="meta">（2025-09-22）</div>
-    <div class="tags">#华为</div>
-    <p class="recap">概要：IT之家 9 月 22 日消息，在上周末的华为全联接大会 2025 上，华为云宣布多项 AI 及云计算领域的关键进展，包括昇腾 AI 云服务升级、大模型行业落地、具身智能平台发布以及分布式云部署等，进一步强化其作为 AI 算力基础设施提供者的角色。</p>
-    <div class="more"><a href="https://www.ithome.com/0/884/690.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
+    <div class="tags">#OpenAI</div>
+    <p class="recap">概要：该设备预计将是一款口袋大小的便携式终端，具有先进的上下文感知系统，与 ChatGPT 背后的大型语言模型完全集成，可实现更自然、更直观的人机交互。</p>
+    <div class="more"><a href="https://www.tmtpost.com/7701612.html" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
     </div>
   </section><section id="六、行业趋势与观察">
     <h2>六、行业趋势与观察</h2>
     <div class="grid">
       <article class="card" data-sec="六、行业趋势与观察">
-    <h3><a href="https://36kr.com/newsflashes/3477279831857540?f=rss" target="_blank" rel="noopener">花旗：苹果供应链企业或从OpenAI的人工智能设备推广中获益</a></h3>
-    <div class="meta">（2025-09-22）</div>
-    <div class="tags">#OpenAI</div>
-    <p class="recap">概要：花旗分析师KynaWong在一份报告中表示，OpenAI开发边缘设备的举措，可能会推动苹果供应链中的中国硬件企业发展。她指出，这家人工智能公司正致力于打造人工智能驱动的“伴侣”型设备，其中可能包括智能眼镜、数字录音笔和可穿戴徽章，首批设备预计将于2026年底或2027年初推出。她还援引媒体报道称，OpenAI已与立讯精密、歌尔股份等苹果供应商进行了接触。</p>
-    <div class="more"><a href="https://36kr.com/newsflashes/3477279831857540?f=rss" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="六、行业趋势与观察">
     <h3><a href="http://www.geekpark.net/news/354228" target="_blank" rel="noopener">巴菲特清仓比亚迪，期间股价上涨 38 倍；苹果折叠屏手机细节曝光；雷军年度演讲定档 9 月 25 日</a></h3>
     <div class="meta">（2025-09-22）</div>
     
@@ -163,7 +238,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
 <footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
 
 <script>
-/* ===== 筛选逻辑 ===== */
+/* ===== 筛选逻辑（不变） ===== */
 const secSel  = document.getElementById('secSel');
 const search  = document.getElementById('search');
 const emptyEl = document.getElementById('emptyHint');
@@ -185,7 +260,6 @@ function filter(){
   const sec = secSel.value;
   let totalVisible = 0;
 
-  // ✅ 只筛选新闻主区，避免把顶部趋势区隐藏
   document.querySelectorAll('#main section').forEach(secEl=>{
     let visible = 0;
     secEl.querySelectorAll('.card').forEach(card=>{
@@ -199,7 +273,6 @@ function filter(){
     secEl.classList.toggle('hidden', visible === 0);
   });
 
-  // 空态提示
   emptyEl.classList.toggle('hidden', totalVisible !== 0);
 
   try{
@@ -213,27 +286,27 @@ secSel.addEventListener('change', filter);
 search.addEventListener('input', run);
 filter();
 
-/* ===== Google Trends 官方 embed_loader.js ===== */
+/* ===== Google Trends 官方 embed（支持时间范围切换） ===== */
 (function mountTrends(){
   const SCRIPT = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
-  const TIME   = 'now 7-d';
+
+  // 每组默认关键词
   const cfg = {
     foreign:  { el: 'gt-foreign',  geo: '',   kw: ['ChatGPT','Gemini','Claude','Grok','Llama'] },
-    domestic: { el: 'gt-domestic', geo: '', kw: ['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
-    vendors:  { el: 'gt-vendors',  geo: '', kw: ['Baidu AI Cloud','Huawei Cloud','Tencent Cloud','Alibaba Cloud','Volcengine'] },
-    market:   { el: 'gt-market',   geo: '',   kw: ['LLM','AI Agent','RAG','Vector Database','Prompt Engineering'] }
+    domestic: { el: 'gt-domestic',  geo: '',   kw: ['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
+    vendors:  { el: 'gt-vendors',   geo: '',   kw: ['Baidu AI Cloud','Huawei Cloud','Tencent Cloud','Alibaba Cloud','Volcengine'] },
+    market:   { el: 'gt-market',    geo: '',   kw: ['LLM','AI Agent','RAG','Vector Database','Prompt Engineering'] }
   };
 
-  function renderOne({ el, geo, kw }){
+  function renderOne({ el, geo, kw }, time){
     try{
       const host = 'https://trends.google.com/trends/embed/';
       const container = document.getElementById(el);
       if (!container) return;
 
-      container.innerHTML = '';
-
-      const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time: TIME }));
-      const query = 'date=' + encodeURIComponent(TIME)
+      container.innerHTML = ''; // 清空骨架
+      const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time }));
+      const query = 'date=' + encodeURIComponent(time)
                   + '&q=' + encodeURIComponent(kw.join(','))
                   + (geo ? '&geo=' + geo : '');
 
@@ -245,28 +318,42 @@ filter();
       );
     }catch(e){
       const c = document.getElementById(el);
-      if (c) c.innerHTML = '<div class="t-fallback">无法显示趋势图（网络受限/被拦截）</div>';
+      if (c) c.parentElement.querySelector('.t-fallback').textContent = '无法显示趋势图（网络受限/被拦截）';
       console.error('Trends render error', e);
     }
   }
 
   function boot(){
     if (!(window.trends && window.trends.embed)) return;
-    renderOne(cfg.foreign);
-    renderOne(cfg.domestic);
-    renderOne(cfg.vendors);
-    renderOne(cfg.market);
+
+    // 初始渲染（默认近 7 天）
+    const defaultTime = 'now 7-d';
+    renderOne(cfg.foreign,  defaultTime);
+    renderOne(cfg.domestic, defaultTime);
+    renderOne(cfg.vendors,  defaultTime);
+    renderOne(cfg.market,   defaultTime);
+
+    // 监听每张卡片右上的时间选择
+    document.querySelectorAll('.t-sel').forEach(sel=>{
+      sel.addEventListener('change', ()=>{
+        const time = sel.value || 'now 7-d';
+        const targetId = sel.dataset.target;
+        const key = targetId.replace(/^gt-/, '');
+        const conf = cfg[key];
+        if (conf) renderOne(conf, time);
+      });
+    });
   }
 
   const s = document.createElement('script');
   s.src = SCRIPT; s.async = true; s.onload = boot;
   document.head.appendChild(s);
 
+  // 兜底：5s 后若仍未加载，显示友好提示
   setTimeout(() => {
     if (!(window.trends && window.trends.embed)) {
-      ['gt-foreign','gt-domestic','gt-vendors','gt-market'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = '<div class="t-fallback">无法加载 Google 趋势（可能被墙/被拦截）</div>';
+      document.querySelectorAll('.t-fallback').forEach(el=>{
+        el.textContent = '无法加载 Google 趋势（可能被墙/被拦截）';
       });
     }
   }, 5000);
