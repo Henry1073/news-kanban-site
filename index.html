@@ -33,11 +33,15 @@ h2{ margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);paddin
 .card h3{margin:0 0 6px;font-size:16px}
 .card h3 a{text-decoration:none;color:var(--fg)}
 .card h3 a:hover{color:var(--accent)}
-.meta{color:var(--sub);font-size:12px;margin-bottom:6px}
-.tags{color:var(--accent);font-size:12px;margin-bottom:6px}
-.recap{margin:.35em 0}
-.more{margin-top:8px}
+/* 统一访问状态颜色，避免紫色 visited */
+.card h3 a:visited{color:var(--fg)}
 .more a{color:var(--accent);text-decoration:none}
+.more a:visited{color:var(--accent)}
+.tags{color:var(--accent);font-size:12px;margin-bottom:6px}
+.tags a{color:var(--accent);text-decoration:none}
+.tags a:visited{color:var(--accent)}
+.meta{color:var(--sub);font-size:12px;margin-bottom:6px}
+.recap{margin:.35em 0}
 section{scroll-margin-top:70px}
 #emptyHint{ color:var(--sub);text-align:center;margin:20px 0 26px;font-size:14px }
 .hidden{display:none!important}
@@ -84,8 +88,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
 .t-body iframe{
   width:100%; height:100%;
   border:0; border-radius:14px;
-  /* 轻度视觉增强（不改变图的样式，只增强观感） */
-  filter:saturate(1.08) contrast(1.05);
+  filter:saturate(1.08) contrast(1.05); /* 轻度视觉增强 */
 }
 
 /* 骨架屏 */
@@ -208,6 +211,20 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <p class="recap">概要：IT之家 9 月 22 日消息，今日，美团 LongCat 团队正式发布全新高效推理模型 LongCat-Flash-Thinking。 官方介绍称，在保持了 LongCat-Flash-Chat 极致速度的同时，全新发布的 LongCat-Flash-Thinking 更强大、更专业。</p>
     <div class="more"><a href="https://www.ithome.com/0/884/801.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.jiqizhixin.com/articles/2025-09-22-4" target="_blank" rel="noopener">LeCun力荐的JEPA杀入LLM，用CV的思路训练LLM，性能鲁棒性双丰收</a></h3>
+    <div class="meta">（2025-09-22）</div>
+    <div class="tags">#LLM</div>
+    
+    <div class="more"><a href="https://www.jiqizhixin.com/articles/2025-09-22-4" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.qbitai.com/2025/09/334835.html" target="_blank" rel="noopener">基于华为云Token服务的稿定AI上线，一站式解决设计难题</a></h3>
+    <div class="meta">（2025-09-22）</div>
+    <div class="tags">#华为 #LLM #多模态</div>
+    <p class="recap">概要：经过华为云深度优化，“稿定AI”大幅提升多模态大模型生成速度，持续优化用户体验。其中文生图大模型提速2倍，文生视频/图生视频大模型提速3.5倍。</p>
+    <div class="more"><a href="https://www.qbitai.com/2025/09/334835.html" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
     </div>
   </section><section id="四、应用与落地案例">
     <h2>四、应用与落地案例</h2>
@@ -238,7 +255,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
 <footer>生成自 n8n · 本页仅作资讯聚合导航，版权归原文方所有</footer>
 
 <script>
-/* ===== 筛选逻辑（不变） ===== */
+/* ===== 筛选逻辑 ===== */
 const secSel  = document.getElementById('secSel');
 const search  = document.getElementById('search');
 const emptyEl = document.getElementById('emptyHint');
@@ -260,6 +277,7 @@ function filter(){
   const sec = secSel.value;
   let totalVisible = 0;
 
+  // 只筛选新闻主区，避免把顶部趋势区隐藏
   document.querySelectorAll('#main section').forEach(secEl=>{
     let visible = 0;
     secEl.querySelectorAll('.card').forEach(card=>{
@@ -273,6 +291,7 @@ function filter(){
     secEl.classList.toggle('hidden', visible === 0);
   });
 
+  // 空态提示
   emptyEl.classList.toggle('hidden', totalVisible !== 0);
 
   try{
@@ -286,11 +305,10 @@ secSel.addEventListener('change', filter);
 search.addEventListener('input', run);
 filter();
 
-/* ===== Google Trends 官方 embed（支持时间范围切换） ===== */
+/* ===== Google Trends 官方 embed（支持时间范围切换；修复骨架遮挡） ===== */
 (function mountTrends(){
   const SCRIPT = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
 
-  // 每组默认关键词
   const cfg = {
     foreign:  { el: 'gt-foreign',  geo: '',   kw: ['ChatGPT','Gemini','Claude','Grok','Llama'] },
     domestic: { el: 'gt-domestic',  geo: '',   kw: ['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
@@ -304,7 +322,11 @@ filter();
       const container = document.getElementById(el);
       if (!container) return;
 
-      container.innerHTML = ''; // 清空骨架
+      // 隐藏骨架
+      const fb = container.parentElement.querySelector('.t-fallback');
+      if (fb) fb.style.display = 'none';
+
+      container.innerHTML = '';
       const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time }));
       const query = 'date=' + encodeURIComponent(time)
                   + '&q=' + encodeURIComponent(kw.join(','))
@@ -318,7 +340,10 @@ filter();
       );
     }catch(e){
       const c = document.getElementById(el);
-      if (c) c.parentElement.querySelector('.t-fallback').textContent = '无法显示趋势图（网络受限/被拦截）';
+      if (c) {
+        const fb = c.parentElement.querySelector('.t-fallback');
+        if (fb) { fb.style.display = 'flex'; fb.textContent = '无法显示趋势图（网络受限/被拦截）'; }
+      }
       console.error('Trends render error', e);
     }
   }
@@ -349,10 +374,11 @@ filter();
   s.src = SCRIPT; s.async = true; s.onload = boot;
   document.head.appendChild(s);
 
-  // 兜底：5s 后若仍未加载，显示友好提示
+  // 兜底：5s 后若仍未加载，显示提示
   setTimeout(() => {
     if (!(window.trends && window.trends.embed)) {
       document.querySelectorAll('.t-fallback').forEach(el=>{
+        el.style.display = 'flex';
         el.textContent = '无法加载 Google 趋势（可能被墙/被拦截）';
       });
     }
