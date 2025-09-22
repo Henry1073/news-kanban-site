@@ -89,14 +89,14 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   background:#fff;
   overflow:hidden;           /* ⭐ 关键：裁掉内部边界（尤其是底部“直线”） */
 }
-/* Trends 注入的 iframe：扩高并上移一点点，把底部边线裁掉；再统一轻度滤镜增强 */
+/* Trends 注入的 iframe：正常大小，不再整体上移 */
 .t-embed iframe{
   width:100%;
-  height:105%;
-  margin-top:-5%;
+  height:100%;
   border:0;
   border-radius:12px;
   filter:saturate(1.06) contrast(1.04);
+  clip-path: inset(0px 0px 20px 0px); /* 只裁掉底部20px */
 }
 
 /* 骨架屏（尺寸与 .t-embed 对齐） */
