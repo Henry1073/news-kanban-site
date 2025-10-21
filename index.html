@@ -33,6 +33,7 @@ h2{ margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);paddin
 .card h3{margin:0 0 6px;font-size:16px}
 .card h3 a{text-decoration:none;color:var(--fg)}
 .card h3 a:hover{color:var(--accent)}
+/* 统一访问状态颜色，避免紫色 visited */
 .card h3 a:visited{color:var(--fg)}
 .more a{color:var(--accent);text-decoration:none}
 .more a:visited{color:var(--accent)}
@@ -46,7 +47,7 @@ section{scroll-margin-top:70px}
 .hidden{display:none!important}
 footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-/* ===== 趋势图 · 容器样式（Chart.js 版本） ===== */
+/* ===== 趋势图 · 容器样式（裁掉底部边线，避免“插到边”） ===== */
 .trends-top{
   max-width:1200px; margin:4px auto 16px; padding:0 12px;
   display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px;
@@ -77,8 +78,28 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   color:#374151; font-size:12px; outline:none;
 }
 
+/* 主体：用 .t-embed 作为 iframe 包裹层，裁切四周并留出内边距 */
 .t-body{ height:340px; position:relative; }
-.t-canvas{ position:absolute; inset:10px 12px; width:calc(100% - 24px); height:calc(100% - 20px); }
+.t-embed{
+  position:absolute;
+  inset:10px 12px;           /* 与卡片边缘留白，和骨架一致 */
+  box-sizing:border-box;
+  padding:0;                 /* 这里不再额外加 padding，由 iframe 自身位移来裁掉底边线 */
+  border-radius:14px;
+  background:#fff;
+  overflow:hidden;           /* ⭐ 关键：裁掉内部边界（尤其是底部“直线”） */
+}
+/* Trends 注入的 iframe：正常大小，不再整体上移 */
+.t-embed iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  border-radius:12px;
+  filter:saturate(1.06) contrast(1.04);
+  clip-path: inset(0px 0px 20px 0px); /* 只裁掉底部20px */
+}
+
+/* 骨架屏（尺寸与 .t-embed 对齐） */
 .t-fallback{
   position:absolute; inset:10px 12px;
   border-radius:14px; overflow:hidden;
@@ -109,7 +130,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
 </div>
 
-<!-- 顶部趋势区（Chart.js + 静态 JSON） -->
+<!-- 顶部趋势区（裁掉底边线 + 时间范围切换） -->
 <section class="trends-top" aria-label="Google 趋势">
   <div class="t-card">
     <div class="t-hd">
@@ -121,7 +142,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
       </select></div>
     </div>
     <div class="t-body">
-      <canvas id="gt-foreign" class="t-canvas"></canvas>
+      <div id="gt-foreign" class="t-embed"></div>
       <div class="t-fallback">加载趋势图…</div>
     </div>
   </div>
@@ -136,7 +157,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
       </select></div>
     </div>
     <div class="t-body">
-      <canvas id="gt-domestic" class="t-canvas"></canvas>
+      <div id="gt-domestic" class="t-embed"></div>
       <div class="t-fallback">加载趋势图…</div>
     </div>
   </div>
@@ -151,7 +172,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
       </select></div>
     </div>
     <div class="t-body">
-      <canvas id="gt-vendors" class="t-canvas"></canvas>
+      <div id="gt-vendors" class="t-embed"></div>
       <div class="t-fallback">加载趋势图…</div>
     </div>
   </div>
@@ -166,7 +187,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
       </select></div>
     </div>
     <div class="t-body">
-      <canvas id="gt-market" class="t-canvas"></canvas>
+      <div id="gt-market" class="t-embed"></div>
       <div class="t-fallback">加载趋势图…</div>
     </div>
   </div>
@@ -179,6 +200,55 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <h2>一、市场与企业动态</h2>
     <div class="grid">
       <article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&mid=2652636874&idx=1&sn=c8fe2605452a12816483e9ee9ba35633&chksm=f07a7db979506a21b891cea199ee1dc0c5fcd466fe6f7a7dd650e65fe6474088b49c03a1b11c&scene=0#rd" target="_blank" rel="noopener">文本已死，视觉当立！Karpathy狂赞DeepSeek新模型，终结分词器时代</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    <div class="tags">#DeepSeek</div>
+    <p class="recap">概要：新智元报道 编辑：KingHZ 好困 【新智元导读】AI新突破！DeepSeek-OCR以像素处理文本，压缩率小于1/10，基准测试领跑。开源一夜4.4k星，Karpathy技痒难耐，展望视觉输入的通用性。 DeepSeek再次让全世界大吃一惊！ 他们最新成果DeepSeek-OCR，从根本上改变了游戏规则—— 文本并非通用的输入。反而，视觉将取而代之！</p>
+    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&mid=2652636874&idx=1&sn=c8fe2605452a12816483e9ee9ba35633&chksm=f07a7db979506a21b891cea199ee1dc0c5fcd466fe6f7a7dd650e65fe6474088b49c03a1b11c&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&mid=2652636874&idx=2&sn=0336b834dde16e22162bef7b2d37ac9e&chksm=f0af96498e56cc2ae6d8276c362e3cd7f529e881c26c304c81cbcf66c86b6954e6b1cb7bdc83&scene=0#rd" target="_blank" rel="noopener">墙体的AI革命！智能超表面如何让建筑「听懂」6G信号？</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    
+    <p class="recap">概要：新智元报道 编辑：KingHZ 【新智元导读】在5G基站功耗高企的当下，室内信号衰减成为通信瓶颈。探索6G如何借助智能超表面和建筑无线友好性，打破建筑与通信行业的壁垒，让96%的室内流量需求得到革命性优化。 5G基站极高的功耗一直被业内诟病。其主导原因是，基站只能部署在室外，但96%的流量需求却源于室内用户。 信号穿墙而过，强度下降了90%~99.9%。</p>
+    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&mid=2652636874&idx=2&sn=0336b834dde16e22162bef7b2d37ac9e&chksm=f0af96498e56cc2ae6d8276c362e3cd7f529e881c26c304c81cbcf66c86b6954e6b1cb7bdc83&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIzNjc1NzUzMw==&mid=2247834628&idx=1&sn=9a08df6f1a8ee6fda5502aa4a91e9c6f&chksm=e96e78ecb38cf06d1637927232275ea0078f57e7da4b6c9c6d48ea37c1ce36f9728858154c3a&scene=0#rd" target="_blank" rel="noopener">直击IROS现场：宇树禾赛自变量杭州论剑，美团C位攒局</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    
+    <p class="recap">概要：henry 发自 IROS 量子位 | 公众号 QbitAI 要说IROS Day 1谁最炸——美团当仁不让。 一手2025美团机器人研究院学术年会，展厅直接被围到到水泄不通。</p>
+    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MzIzNjc1NzUzMw==&mid=2247834628&idx=1&sn=9a08df6f1a8ee6fda5502aa4a91e9c6f&chksm=e96e78ecb38cf06d1637927232275ea0078f57e7da4b6c9c6d48ea37c1ce36f9728858154c3a&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&mid=2651259643&idx=3&sn=8945f8290642fd9db22b96311b66ef08&chksm=bcc2d51ea3c439a2fe3c171e27b9de180d1e2a7e9371e2754c15e2542ba9d35c028679f95cfb&scene=0#rd" target="_blank" rel="noopener">技术人如何在 AI 浪潮中提升个人竞争力？| 极客时间</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    
+    <p class="recap">概要：hello！</p>
+    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&mid=2651259643&idx=3&sn=8945f8290642fd9db22b96311b66ef08&chksm=bcc2d51ea3c439a2fe3c171e27b9de180d1e2a7e9371e2754c15e2542ba9d35c028679f95cfb&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&mid=2651259643&idx=1&sn=e380be083ef03ecbaa84ebe055685e2e&chksm=bc8cad13e77a848e0528a060c7f086a302d52cc24be516a9ca78e0f5cada89c9bdbe43d754c1&scene=0#rd" target="_blank" rel="noopener">我是微软工程师，编程了30多年，如今我几乎不再编程了</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    
+    <p class="recap">概要：作者｜Paul Payne 译者｜冬梅 编者按： 我们正经历一场堪称“AI 版工业革命”的浪潮。各种新工具、新模型层出不穷，更新速度快到让人眼花缭乱——昨天刚推出的框架，今天可能就被新一代模型取代。表面上看，这是一片繁荣景象，但对开发者来说，这场盛宴背后隐藏着焦虑与迷惘。 过去，程序员精通一个技术栈，就能吃好几年饭。</p>
+    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&mid=2651259643&idx=1&sn=e380be083ef03ecbaa84ebe055685e2e&chksm=bc8cad13e77a848e0528a060c7f086a302d52cc24be516a9ca78e0f5cada89c9bdbe43d754c1&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5MjcyMjU5NA==&mid=2649804073&idx=1&sn=2e0da7ec02abb8ac875e0687a9ac8e72&chksm=bf00606754c29129e833bd4fe81eb6d79fe6bac90d09a78688889ba5d56352011b95450be3ed&scene=0#rd" target="_blank" rel="noopener">11.11增长就靠TA！免费AI工具箱速领</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    
+    <p class="recap">概要：京东11.11，全面免费开放AI增长工具包！</p>
+    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MjcyMjU5NA==&mid=2649804073&idx=1&sn=2e0da7ec02abb8ac875e0687a9ac8e72&chksm=bf00606754c29129e833bd4fe81eb6d79fe6bac90d09a78688889ba5d56352011b95450be3ed&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
+    <h3><a href="https://api3.cls.cn/share/article/2175454?os=web&sv=8.4.6&app=CailianpressWeb" target="_blank" rel="noopener">日立与OpenAI建立战略合作伙伴关系</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    <div class="tags">#OpenAI</div>
+    <p class="recap">概要：【日立与OpenAI建立战略合作伙伴关系】财联社10月21日电，日立与OpenAI宣布，双方已签署谅解备忘录，建立战略合作伙伴关系，共同致力于构建新一代人工智能基础设施并拓展全球数据中心。该协议于2025年10月2日签署。根据该谅解备忘录，双方将在多个关键领域共同制定发展计划，结合各自优势推进可持续数据中心运营，加速部署人工智能技术。</p>
+    <div class="more"><a href="https://api3.cls.cn/share/article/2175454?os=web&sv=8.4.6&app=CailianpressWeb" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="一、市场与企业动态">
     <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&mid=2652636832&idx=3&sn=5a2b28aab9526e9d2f39bf6092a36874&chksm=f094959ef4c05438f7d962bd9ab3e679abee7c8efbc3617fb18d64544aac32601c6793ed9e0e&scene=0#rd" target="_blank" rel="noopener">长生不老成真？哈佛AI数周破解「衰老密码」，人类寿命或迎重写</a></h3>
     <div class="meta">（2025-10-21）</div>
     
@@ -207,18 +277,11 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="more"><a href="https://www.ithome.com/0/891/060.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIzNjc1NzUzMw==&mid=2247834575&idx=1&sn=44b8002cc7e5f97f3f1f3ad4c688f59c&chksm=e9f49660e6bf57df95e83cc3054c4a9e381109517e88212d2d8eb505f56b9df3cbdae17ee29a&scene=0#rd" target="_blank" rel="noopener">我拿AI给神曲《八方来财》做了个MV，真的好魔性！</a></h3>
+    <h3><a href="https://www.leiphone.com/category/transportation/2wn3PZXkzqwUuzhk.html" target="_blank" rel="noopener">博世的AB面：智驾的速度与Tier1巨头的厚度</a></h3>
     <div class="meta">（2025-10-21）</div>
     
-    <p class="recap">概要：金磊 发自 凹非寺 量子位 | 公众号 QbitAI 给歌曲做MV，现在已经是一个AI就能搞定的时代了。 来，请欣赏用AI给神曲《八方来财》做的东方赛博朋克MV： 而这整整一分钟的内容，真的就是用一个AI来生成的。 并且这个AI啊，并不是来自咱们主流定义的大厂，而是出自一家央企—— 中国电信面向公众开放的AI创作平台，TeleStudio。</p>
-    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MzIzNjc1NzUzMw==&mid=2247834575&idx=1&sn=44b8002cc7e5f97f3f1f3ad4c688f59c&chksm=e9f49660e6bf57df95e83cc3054c4a9e381109517e88212d2d8eb505f56b9df3cbdae17ee29a&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIzNjc1NzUzMw==&mid=2247834575&idx=2&sn=e274cbff769a6a9e44e46e7131989037&chksm=e9b8a2abf93414162502a5605c22b4945cf5f32f262b97e210d37c8504bff40997cac1e36151&scene=0#rd" target="_blank" rel="noopener">ChatGPT也遭殃，亚马逊服务器故障，半个互联网都崩了</a></h3>
-    <div class="meta">（2025-10-21）</div>
-    <div class="tags">#OpenAI</div>
-    <p class="recap">概要：克雷西 发自 凹非寺 量子位 | 公众号 QbitAI 亚马逊一声咳嗽，半个互联网都地震了。 由于亚马逊AWS服务器宕机，大量互联网服务被迫中断，ChatGPT也被殃及。 故障发生在美国东部us-east-1区域，是AWS全球服务最核心的一块。 根据故障追踪平台Downdetector的数据，当天累计收到超过650万份用户故障报告。</p>
-    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MzIzNjc1NzUzMw==&mid=2247834575&idx=2&sn=e274cbff769a6a9e44e46e7131989037&chksm=e9b8a2abf93414162502a5605c22b4945cf5f32f262b97e210d37c8504bff40997cac1e36151&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
+    <p class="recap">概要：在电动化与智能化的全球赛道上，中国车企的领先身位已经十分明显。今年的慕尼黑车展上，中国在整车、电池、智能驾驶等全产业链的存在感十足。更有一种论调在传递：中国车企是否会“踏平”欧洲市场？ 实际上，这场“德中电动车争夺战”远未到终局。外资深厚的品牌积淀、完善的供应链体系、以及消费者对 “德国制造” 的天然认可，仍然是难以撼动的核心优势。</p>
+    <div class="more"><a href="https://www.leiphone.com/category/transportation/2wn3PZXkzqwUuzhk.html" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="一、市场与企业动态">
     <h3><a href="https://www.ithome.com/0/891/039.htm" target="_blank" rel="noopener">在对手“家门口”发传单：微软 Edge 浏览器访问 Deepseek 等主流 AI 官网，地址栏建议你换用 Copilot</a></h3>
@@ -226,13 +289,6 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="tags">#Microsoft #DeepSeek</div>
     <p class="recap">概要：IT之家 10 月 21 日消息，科技媒体 Windows Latest 今天（10 月 21 日）发布博文，报道称为推广自家 AI 助手 Copilot，微软在 Edge 浏览器中启动新策略，用户访问 ChatGPT、Perplexity、Deepseek 等主流 AI 聊天网站时，其地址栏会出现“试用 Copilot”提醒。</p>
     <div class="more"><a href="https://www.ithome.com/0/891/039.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="一、市场与企业动态">
-    <h3><a href="https://www.ithome.com/0/891/007.htm" target="_blank" rel="noopener">Claude 生命科学版启动：AI 性能媲美人类专家，获赛诺菲等多家顶级药企青睐</a></h3>
-    <div class="meta">（2025-10-21）</div>
-    <div class="tags">#Anthropic</div>
-    <p class="recap">概要：IT之家 10 月 21 日消息，科技媒体 NeoWin 昨日（10 月 20 日）发布博文，报道称 Anthropic 公司启动“Claude 生命科学版”（Claude for Life Sciences）计划，目标让其前沿 AI 技术更深入地推向生物医学领域。</p>
-    <div class="more"><a href="https://www.ithome.com/0/891/007.htm" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
 <article class="card" data-sec="一、市场与企业动态">
     <h3><a href="http://mp.weixin.qq.com/s?__biz=MzA3MTA0ODYyOA==&mid=2651467218&idx=1&sn=3a8e756363babf8f05cb675be3e20629&chksm=85db1fba1cfeecd16e94c0819d5f687b1500938780f026b66cc6dd79ebf3884c31b37881e811&scene=0#rd" target="_blank" rel="noopener">Excel 迎来 AI 时代！微软推出全新 =COPILOT() 函数</a></h3>
@@ -246,6 +302,48 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <h2>二、产品与技术创新</h2>
     <div class="grid">
       <article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="http://www.geekpark.net/news/355202" target="_blank" rel="noopener">这个技能转换 Agent 平台，想帮你积累「睡后收入」｜AI 上新</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    <div class="tags">#Agent</div>
+    <p class="recap">概要：作者｜金光浩 编辑｜靖宇 在 AI 时代，最赚钱的可能不是那些会写代码的人，而是那些能把专业经验 「 产品化 」 的人。</p>
+    <div class="more"><a href="http://www.geekpark.net/news/355202" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIzNjc1NzUzMw==&mid=2247834628&idx=2&sn=0236f7ac92829a249aecf571652b3d27&chksm=e9efd8d9ece68c49db3e6bdb7c512a50a2c22eaf21a28afb0fcef00106dae9ee2d31831e5369&scene=0#rd" target="_blank" rel="noopener">苹果AI选Mamba：Agent任务比Transformer更好</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    <div class="tags">#Agent</div>
+    <p class="recap">概要：闻乐 发自 凹非寺 量子位 | 公众号 QbitAI 都说苹果AI慢半拍，没想到新研究直接在Transformer头上动土。（doge） 「Mamba+工具」，在Agent场景更能打！</p>
+    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MzIzNjc1NzUzMw==&mid=2247834628&idx=2&sn=0236f7ac92829a249aecf571652b3d27&chksm=e9efd8d9ece68c49db3e6bdb7c512a50a2c22eaf21a28afb0fcef00106dae9ee2d31831e5369&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI0NzU1NzI5NQ==&mid=2247529194&idx=1&sn=7f260ecd66bac8e5fb4a39d1e4c3ed35&chksm=e855947514b28ece1375eb33c6f5e76a5d7307b6f5c25c592ee5e7cc2a9c5797a363915b3072&scene=0#rd" target="_blank" rel="noopener">努比亚×火山引擎：豆包大模型加持，红魔11 Pro、Nubia Z80 Ultra新机来袭</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    <div class="tags">#字节跳动 #LLM</div>
+    <p class="recap">概要：近日，努比亚发布了红魔11 Pro 系列、努比亚Z80 Ultra 等旗舰新机，深度集成豆包大模型的 AI 能力，让“流畅+智慧”的用户体验覆盖从游戏电竞到日常生活的多元场景。</p>
+    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MzI0NzU1NzI5NQ==&mid=2247529194&idx=1&sn=7f260ecd66bac8e5fb4a39d1e4c3ed35&chksm=e855947514b28ece1375eb33c6f5e76a5d7307b6f5c25c592ee5e7cc2a9c5797a363915b3072&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="https://www.qbitai.com/2025/10/344074.html" target="_blank" rel="noopener">OpenAI也缺卡！僧多粥少，自曝内部抢卡抢到发疯</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    <div class="tags">#OpenAI #算力</div>
+    <p class="recap">概要：痛苦与煎熬！搬运GPU像玩俄罗斯方块</p>
+    <div class="more"><a href="https://www.qbitai.com/2025/10/344074.html" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&mid=2651259643&idx=4&sn=9325ab297945c46f6d23fb93013aa21b&chksm=bc3204a808066870b8d35ae96a86310b706f30df634f7d8619a0bb708dca27b916752a618450&scene=0#rd" target="_blank" rel="noopener">HAMi 2.7.0 重磅发布 | 异构芯片全面拓展，调度更稳、生态更强</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    <div class="tags">#算力</div>
+    <p class="recap">概要：来源 | Dynamia 密瓜智能 公众号 芯与序（Of Silicon &amp; Scheduling） —— 万般之芯，合于一序。 向 Kubernetes 1.34 的 Of Wind &amp; Will 致意：彼处以风与志命名航向； 此处，我们以 芯 与 序 为坐标。 芯，是世间万象的硅与算：形态各异，自有脾性； 序，是人们给出的节律与秩序：在复杂中取可走之径。</p>
+    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&mid=2651259643&idx=4&sn=9325ab297945c46f6d23fb93013aa21b&chksm=bc3204a808066870b8d35ae96a86310b706f30df634f7d8619a0bb708dca27b916752a618450&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
+    <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&mid=2651259643&idx=2&sn=4d370e73877a7c3a4e808dda07153205&chksm=bc7c383949afc2ac7ec4aea6bf2ad7327eeea19c2afd369caee791dc8aec04daf8b0994fda4b&scene=0#rd" target="_blank" rel="noopener">提效软件研发，AI Agent好用吗？</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    <div class="tags">#Agent</div>
+    <p class="recap">概要：作者 | QCon 全球软件开发大会 策划 | Kitty 编辑 | 宇琪 2025 年是 Agentic AI 应用的元年，AI4SE（Artificial Intelligence for Software Engineering）能提升效率在行业内形成了高度共识，但在企业落地上面临了不少挑战。那么，AI Agent 实施中有哪些“真坑”与“实锤”？</p>
+    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&mid=2651259643&idx=2&sn=4d370e73877a7c3a4e808dda07153205&chksm=bc7c383949afc2ac7ec4aea6bf2ad7327eeea19c2afd369caee791dc8aec04daf8b0994fda4b&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="二、产品与技术创新">
     <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg3Mzg5MjY3Nw==&mid=2247524908&idx=1&sn=1fd17b25dab0a465e2d3b3537948802a&chksm=cf01abb75252648cea9f6bae3bc08fa500c14d50bbf35be8e9f43c37f55839d4eb97f8ff3511&scene=0#rd" target="_blank" rel="noopener">26000奖金，「算网杯」2025 AI Agent黑客松大赛10月25日昆山开赛！</a></h3>
     <div class="meta">（2025-10-21）</div>
     <div class="tags">#Agent</div>
@@ -303,6 +401,13 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <h2>四、应用与落地案例</h2>
     <div class="grid">
       <article class="card" data-sec="四、应用与落地案例">
+    <h3><a href="https://www.tmtpost.com/7733250.html" target="_blank" rel="noopener">=Envision 集团董事长致力于在三年内建立比美国更大、更强的能源人工智能基础模型</a></h3>
+    <div class="meta">（2025-10-21）</div>
+    
+    <p class="recap">概要：&quot;传统的人工智能只能识别关系，无法构建因果关系，&quot;张说。&quot;未来在于物理人工智能，它不仅能让我们理解世界，还能改变世界。&quot;</p>
+    <div class="more"><a href="https://www.tmtpost.com/7733250.html" target="_blank" rel="noopener">阅读原文 →</a></div>
+  </article>
+<article class="card" data-sec="四、应用与落地案例">
     <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg3Mzg5MjY3Nw==&mid=2247524905&idx=2&sn=44d6ef50ca5e6e3ca54f485700b8c0a6&chksm=cf8d4a7f758dae496be28a81cefbf912b4a492197fca8bdc92daf20dbde66da9bcc4f986c234&scene=0#rd" target="_blank" rel="noopener">Zen7 Labs开源全球首个去中心化支付智能体（DePA），打造下一代AI Agent 金融基础设施</a></h3>
     <div class="meta">（2025-10-21）</div>
     <div class="tags">#OpenAI #百度 #讯飞 #LLM</div>
@@ -332,13 +437,6 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <h2>六、行业趋势与观察</h2>
     <div class="grid">
       <article class="card" data-sec="六、行业趋势与观察">
-    <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&mid=2652636832&idx=2&sn=66d4c620deb75afdfe274d83644c4a1b&chksm=f05cdd7d1a4a751705c8109330d2d5d7ed2e986600d7dda223b76f14a885b482951b09380090&scene=0#rd" target="_blank" rel="noopener">ChatGPT缔造者联手DeepMind大神，用AI攻坚高温超导，半个硅谷抢着投</a></h3>
-    <div class="meta">（2025-10-21）</div>
-    <div class="tags">#OpenAI #Google</div>
-    <p class="recap">概要：新智元报道 编辑：艾伦 好困 【新智元导读】OpenAI前研究副总裁Liam Fedus与DeepMind材料科学领军者Ekin Cubuk共创Periodic Labs，以一轮高达3亿美元的种子融资走出隐身模式，震惊硅谷。然而，曾给出祝福的前东家OpenAI，并未参与本轮投资。</p>
-    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&mid=2652636832&idx=2&sn=66d4c620deb75afdfe274d83644c4a1b&chksm=f05cdd7d1a4a751705c8109330d2d5d7ed2e986600d7dda223b76f14a885b482951b09380090&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="六、行业趋势与观察">
     <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIzNjc1NzUzMw==&mid=2247834575&idx=5&sn=070248c9e83e852fa176783763f47a46&chksm=e90ae43ce4e8145e0514a46fd7418666d6ba8932063077724a6f41aa014cd2c52985a85fa345&scene=0#rd" target="_blank" rel="noopener">人工智能年度榜单火热报名中！五大奖项，寻找AI+时代的先锋力量</a></h3>
     <div class="meta">（2025-10-21）</div>
     
@@ -351,13 +449,6 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
     <div class="tags">#OpenAI</div>
     <p class="recap">概要：Jay 发自 凹非寺 量子位 | 公众号 QbitAI 魔幻啊魔幻。 全球顶级咨询公司麦肯锡，居然收到了OpenAI最近给Tokens消耗大客户颁发的奖牌。 麦肯锡自己还怪自豪的，第一时间就把奖牌po到了领英上。 等等，好像哪里不对……但凡过遍脑子，都能察觉出“这份荣耀”有点不对味—— 你花百万美金买PPT的麦肯锡，竟然是ChatGPT的大客户？！</p>
     <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MzIzNjc1NzUzMw==&mid=2247834575&idx=3&sn=81c66380cdeb980948c9be99f8bf8e91&chksm=e98b2220c4409d94bc4bf1557cb2772aff941fad6951a74deb6ddab708fe01a7b1a385629e1a&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
-  </article>
-<article class="card" data-sec="六、行业趋势与观察">
-    <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&mid=2652636645&idx=1&sn=85b89604a53c5baaa8a4d700fa666dcf&chksm=f0299df10ce598f63eeada4624eea49231b5658005d5e81edeef9bd0dd93d6229ef836d85a5c&scene=0#rd" target="_blank" rel="noopener">科研狗狂喜！Claude新版神器一键跑完整套流程，告别996爆肝研究</a></h3>
-    <div class="meta">（2025-10-21）</div>
-    <div class="tags">#Anthropic</div>
-    <p class="recap">概要：新智元报道 编辑：定慧 桃子 【新智元导读】真正的科研利器诞生了！Claude生命科学版出世，搭载最强Claude Sonnet 4.5，实验基准碾压人类。不论是统计代码编写，还是文献总结，AI数小时搞定数月课题。 科研狗的春天来了！ 今天，Anthropic正式发布「Claude生命科学版」（Claude for Life Sciences）。</p>
-    <div class="more"><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&mid=2652636645&idx=1&sn=85b89604a53c5baaa8a4d700fa666dcf&chksm=f0299df10ce598f63eeada4624eea49231b5658005d5e81edeef9bd0dd93d6229ef836d85a5c&scene=0#rd" target="_blank" rel="noopener">阅读原文 →</a></div>
   </article>
     </div>
   </section>
@@ -415,93 +506,83 @@ const run = debounce(filter, 180);
 secSel.addEventListener('change', filter);
 search.addEventListener('input', run);
 filter();
-</script>
 
-<!-- ====== Chart.js + Luxon（时间轴） ====== -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-<script src="https://cdn.jsdelivr.net/npm/luxon@3"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
+/* ===== Google Trends 官方 embed（时间切换 + 骨架控制 + 裁边） ===== */
+(function mountTrends(){
+  const SCRIPT = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
 
-<script>
-/* ===== Google Trends（缓存版）：读取 /data/trends/*.json 渲染为折线图 =====
-   👉 建议将 JSON 放在与你网站同仓库的 GitHub Pages 上，这样这里可用相对路径更稳定。
-*/
-function jsonURL(slug){
-  // 同仓库同站点部署（推荐）：相对路径
-  return '/data/trends/' + slug + '.json';
-  // 如果你没有用 Pages 托管 JSON，改用 raw 链接也可（可能被公司网络拦）：
-  // return 'https://raw.githubusercontent.com/Henry1073/news-kanban-site/main/data/trends/' + slug + '.json';
-}
+  const cfg = {
+    foreign:  { el: 'gt-foreign',  geo: '',   kw: ['ChatGPT','Gemini','Claude','Grok','Llama'] },
+    domestic: { el: 'gt-domestic',  geo: '',   kw: ['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
+    vendors:  { el: 'gt-vendors',   geo: '',   kw: ['Baidu AI Cloud','Huawei Cloud','Tencent Cloud','Alibaba Cloud','Volcengine'] },
+    market:   { el: 'gt-market',    geo: '',   kw: ['LLM','AI Agent','RAG','Vector Database','Prompt Engineering'] }
+  };
 
-async function loadJSON(slug){
-  const res = await fetch(jsonURL(slug), { cache: 'no-store' });
-  if (!res.ok) throw new Error(slug + ' ' + res.status);
-  return res.json();
-}
+  function renderOne({ el, geo, kw }, time){
+    try{
+      const host = 'https://trends.google.com/trends/embed/';
+      const container = document.getElementById(el);
+      if (!container) return;
 
-function drawLine(canvasId, payload){
-  // payload: { keys: [...], rows: [{ t:'YYYY-MM-DD' 或 'YYYY-MM-DD HH:MM', series:{k:val...}}] }
-  const labels = payload.rows.map(r => r.t);
-  const datasets = payload.keys.map(k => ({
-    label: k,
-    data: payload.rows.map(r => r.series[k] ?? 0),
-    borderWidth: 2, tension: 0.25, pointRadius: 0, fill: false
-  }));
+      // 隐藏骨架
+      const fb = container.parentElement.querySelector('.t-fallback');
+      if (fb) fb.style.display = 'none';
 
-  new Chart(document.getElementById(canvasId).getContext('2d'), {
-    type: 'line',
-    data: { labels, datasets },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: { type: 'time', time: { unit: 'day' } },
-        y: { beginAtZero: true, ticks: { precision: 0 } }
-      },
-      plugins: {
-        legend: { position: 'bottom' },
-        tooltip: { mode: 'index', intersect: false }
+      container.innerHTML = '';
+      const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time }));
+      const query = 'date=' + encodeURIComponent(time)
+                  + '&q=' + encodeURIComponent(kw.join(','))
+                  + (geo ? '&geo=' + geo : '');
+
+      trends.embed.renderExploreWidgetTo(
+        container,
+        'TIMESERIES',
+        { comparisonItem, category: 0, property: '' },
+        { exploreQuery: query, guestPath: host }
+      );
+    }catch(e){
+      const c = document.getElementById(el);
+      if (c) {
+        const fb = c.parentElement.querySelector('.t-fallback');
+        if (fb) { fb.style.display = 'flex'; fb.textContent = '无法显示趋势图（网络受限/被拦截）'; }
       }
+      console.error('Trends render error', e);
     }
-  });
-}
-
-async function renderTrendsFor(slug, canvasId, timeWindow){
-  // 当前 Chart.js 渲染基于缓存 JSON；timeWindow 只做 UI 切换提示，如需切换不同时间范围，请让 n8n 产出不同 JSON 文件。
-  try{
-    const data = await loadJSON(slug);
-    // 隐藏骨架
-    const fb = document.getElementById(canvasId)?.parentElement?.querySelector('.t-fallback');
-    if (fb) fb.style.display = 'none';
-    drawLine(canvasId, data);
-  }catch(e){
-    const el = document.getElementById(canvasId);
-    if (el) {
-      const fb = el.parentElement.querySelector('.t-fallback');
-      if (fb) { fb.style.display = 'flex'; fb.textContent = '无法加载缓存数据（' + slug + '）'; }
-    }
-    console.error('Trends cache render error', slug, e);
   }
-}
 
-function bootTrends(){
-  // 默认渲染
-  renderTrendsFor('foreign',  'gt-foreign',  'now 7-d');
-  renderTrendsFor('domestic', 'gt-domestic', 'now 7-d');
-  renderTrendsFor('vendors',  'gt-vendors',  'now 7-d');
-  renderTrendsFor('market',   'gt-market',   'now 7-d');
+  function boot(){
+    if (!(window.trends && window.trends.embed)) return;
 
-  // 时间范围下拉：这里只是 UI；真正的时间窗请在 n8n 侧生成对应 JSON，再在这里按需切换不同文件
-  document.querySelectorAll('.t-sel').forEach(sel=>{
-    sel.addEventListener('change', ()=>{
-      const targetId = sel.dataset.target;          // 例如 'gt-foreign'
-      const key = targetId.replace(/^gt-/, '');      // 'foreign'
-      // 如果你将来产出多套时间窗 JSON，可在这里根据 sel.value 选择不同文件名
-      // 例如：'foreign-7d.json' / 'foreign-3m.json' / 'foreign-12m.json'
-      renderTrendsFor(key, targetId, sel.value || 'now 7-d');
+    const defaultTime = 'now 7-d';
+    renderOne(cfg.foreign,  defaultTime);
+    renderOne(cfg.domestic, defaultTime);
+    renderOne(cfg.vendors,  defaultTime);
+    renderOne(cfg.market,   defaultTime);
+
+    // 时间范围切换
+    document.querySelectorAll('.t-sel').forEach(sel=>{
+      sel.addEventListener('change', ()=>{
+        const time = sel.value || 'now 7-d';
+        const targetId = sel.dataset.target;
+        const key = targetId.replace(/^gt-/, '');
+        const conf = cfg[key];
+        if (conf) renderOne(conf, time);
+      });
     });
-  });
-}
+  }
 
-document.addEventListener('DOMContentLoaded', bootTrends);
+  const s = document.createElement('script');
+  s.src = SCRIPT; s.async = true; s.onload = boot;
+  document.head.appendChild(s);
+
+  // 兜底：5s 后若仍未加载，显示提示
+  setTimeout(() => {
+    if (!(window.trends && window.trends.embed)) {
+      document.querySelectorAll('.t-fallback').forEach(el=>{
+        el.style.display = 'flex';
+        el.textContent = '无法加载 Google 趋势（可能被墙/被拦截）';
+      });
+    }
+  }, 5000);
+})();
 </script>
