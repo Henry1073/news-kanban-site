@@ -33,7 +33,6 @@ h2{ margin:28px 0 12px;font-size:20px;border-left:4px solid var(--accent);paddin
 .card h3{margin:0 0 6px;font-size:16px}
 .card h3 a{text-decoration:none;color:var(--fg)}
 .card h3 a:hover{color:var(--accent)}
-/* 统一访问状态颜色，避免紫色 visited */
 .card h3 a:visited{color:var(--fg)}
 .more a{color:var(--accent);text-decoration:none}
 .more a:visited{color:var(--accent)}
@@ -47,7 +46,7 @@ section{scroll-margin-top:70px}
 .hidden{display:none!important}
 footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);font-size:12px }
 
-/* ===== 趋势图 · 容器样式（裁掉底部边线，避免“插到边”） ===== */
+/* ===== 趋势图 · 容器样式（Chart.js 版本） ===== */
 .trends-top{
   max-width:1200px; margin:4px auto 16px; padding:0 12px;
   display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px;
@@ -78,28 +77,8 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   color:#374151; font-size:12px; outline:none;
 }
 
-/* 主体：用 .t-embed 作为 iframe 包裹层，裁切四周并留出内边距 */
 .t-body{ height:340px; position:relative; }
-.t-embed{
-  position:absolute;
-  inset:10px 12px;           /* 与卡片边缘留白，和骨架一致 */
-  box-sizing:border-box;
-  padding:0;                 /* 这里不再额外加 padding，由 iframe 自身位移来裁掉底边线 */
-  border-radius:14px;
-  background:#fff;
-  overflow:hidden;           /* ⭐ 关键：裁掉内部边界（尤其是底部“直线”） */
-}
-/* Trends 注入的 iframe：正常大小，不再整体上移 */
-.t-embed iframe{
-  width:100%;
-  height:100%;
-  border:0;
-  border-radius:12px;
-  filter:saturate(1.06) contrast(1.04);
-  clip-path: inset(0px 0px 20px 0px); /* 只裁掉底部20px */
-}
-
-/* 骨架屏（尺寸与 .t-embed 对齐） */
+.t-canvas{ position:absolute; inset:10px 12px; width:calc(100% - 24px); height:calc(100% - 20px); }
 .t-fallback{
   position:absolute; inset:10px 12px;
   border-radius:14px; overflow:hidden;
@@ -130,7 +109,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
   <input id="search" type="search" placeholder="搜索标题 / 概要 / 标签…" aria-label="搜索">
 </div>
 
-<!-- 顶部趋势区（裁掉底边线 + 时间范围切换） -->
+<!-- 顶部趋势区（Chart.js + 静态 JSON） -->
 <section class="trends-top" aria-label="Google 趋势">
   <div class="t-card">
     <div class="t-hd">
@@ -142,7 +121,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
       </select></div>
     </div>
     <div class="t-body">
-      <div id="gt-foreign" class="t-embed"></div>
+      <canvas id="gt-foreign" class="t-canvas"></canvas>
       <div class="t-fallback">加载趋势图…</div>
     </div>
   </div>
@@ -157,7 +136,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
       </select></div>
     </div>
     <div class="t-body">
-      <div id="gt-domestic" class="t-embed"></div>
+      <canvas id="gt-domestic" class="t-canvas"></canvas>
       <div class="t-fallback">加载趋势图…</div>
     </div>
   </div>
@@ -172,7 +151,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
       </select></div>
     </div>
     <div class="t-body">
-      <div id="gt-vendors" class="t-embed"></div>
+      <canvas id="gt-vendors" class="t-canvas"></canvas>
       <div class="t-fallback">加载趋势图…</div>
     </div>
   </div>
@@ -187,7 +166,7 @@ footer{ max-width:1200px;margin:20px auto 40px;padding:0 16px;color:var(--sub);f
       </select></div>
     </div>
     <div class="t-body">
-      <div id="gt-market" class="t-embed"></div>
+      <canvas id="gt-market" class="t-canvas"></canvas>
       <div class="t-fallback">加载趋势图…</div>
     </div>
   </div>
@@ -436,83 +415,93 @@ const run = debounce(filter, 180);
 secSel.addEventListener('change', filter);
 search.addEventListener('input', run);
 filter();
+</script>
 
-/* ===== Google Trends 官方 embed（时间切换 + 骨架控制 + 裁边） ===== */
-(function mountTrends(){
-  const SCRIPT = 'https://ssl.gstatic.com/trends_nrtr/3528_RC01/embed_loader.js';
+<!-- ====== Chart.js + Luxon（时间轴） ====== -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@3"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
 
-  const cfg = {
-    foreign:  { el: 'gt-foreign',  geo: '',   kw: ['ChatGPT','Gemini','Claude','Grok','Llama'] },
-    domestic: { el: 'gt-domestic',  geo: '',   kw: ['DeepSeek','Ernie','Hunyuan','Qwen','Doubao'] },
-    vendors:  { el: 'gt-vendors',   geo: '',   kw: ['Baidu AI Cloud','Huawei Cloud','Tencent Cloud','Alibaba Cloud','Volcengine'] },
-    market:   { el: 'gt-market',    geo: '',   kw: ['LLM','AI Agent','RAG','Vector Database','Prompt Engineering'] }
-  };
+<script>
+/* ===== Google Trends（缓存版）：读取 /data/trends/*.json 渲染为折线图 =====
+   👉 建议将 JSON 放在与你网站同仓库的 GitHub Pages 上，这样这里可用相对路径更稳定。
+*/
+function jsonURL(slug){
+  // 同仓库同站点部署（推荐）：相对路径
+  return '/data/trends/' + slug + '.json';
+  // 如果你没有用 Pages 托管 JSON，改用 raw 链接也可（可能被公司网络拦）：
+  // return 'https://raw.githubusercontent.com/Henry1073/news-kanban-site/main/data/trends/' + slug + '.json';
+}
 
-  function renderOne({ el, geo, kw }, time){
-    try{
-      const host = 'https://trends.google.com/trends/embed/';
-      const container = document.getElementById(el);
-      if (!container) return;
+async function loadJSON(slug){
+  const res = await fetch(jsonURL(slug), { cache: 'no-store' });
+  if (!res.ok) throw new Error(slug + ' ' + res.status);
+  return res.json();
+}
 
-      // 隐藏骨架
-      const fb = container.parentElement.querySelector('.t-fallback');
-      if (fb) fb.style.display = 'none';
+function drawLine(canvasId, payload){
+  // payload: { keys: [...], rows: [{ t:'YYYY-MM-DD' 或 'YYYY-MM-DD HH:MM', series:{k:val...}}] }
+  const labels = payload.rows.map(r => r.t);
+  const datasets = payload.keys.map(k => ({
+    label: k,
+    data: payload.rows.map(r => r.series[k] ?? 0),
+    borderWidth: 2, tension: 0.25, pointRadius: 0, fill: false
+  }));
 
-      container.innerHTML = '';
-      const comparisonItem = kw.map(k => ({ keyword: k, geo: geo || '', time }));
-      const query = 'date=' + encodeURIComponent(time)
-                  + '&q=' + encodeURIComponent(kw.join(','))
-                  + (geo ? '&geo=' + geo : '');
-
-      trends.embed.renderExploreWidgetTo(
-        container,
-        'TIMESERIES',
-        { comparisonItem, category: 0, property: '' },
-        { exploreQuery: query, guestPath: host }
-      );
-    }catch(e){
-      const c = document.getElementById(el);
-      if (c) {
-        const fb = c.parentElement.querySelector('.t-fallback');
-        if (fb) { fb.style.display = 'flex'; fb.textContent = '无法显示趋势图（网络受限/被拦截）'; }
+  new Chart(document.getElementById(canvasId).getContext('2d'), {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { type: 'time', time: { unit: 'day' } },
+        y: { beginAtZero: true, ticks: { precision: 0 } }
+      },
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: { mode: 'index', intersect: false }
       }
-      console.error('Trends render error', e);
     }
+  });
+}
+
+async function renderTrendsFor(slug, canvasId, timeWindow){
+  // 当前 Chart.js 渲染基于缓存 JSON；timeWindow 只做 UI 切换提示，如需切换不同时间范围，请让 n8n 产出不同 JSON 文件。
+  try{
+    const data = await loadJSON(slug);
+    // 隐藏骨架
+    const fb = document.getElementById(canvasId)?.parentElement?.querySelector('.t-fallback');
+    if (fb) fb.style.display = 'none';
+    drawLine(canvasId, data);
+  }catch(e){
+    const el = document.getElementById(canvasId);
+    if (el) {
+      const fb = el.parentElement.querySelector('.t-fallback');
+      if (fb) { fb.style.display = 'flex'; fb.textContent = '无法加载缓存数据（' + slug + '）'; }
+    }
+    console.error('Trends cache render error', slug, e);
   }
+}
 
-  function boot(){
-    if (!(window.trends && window.trends.embed)) return;
+function bootTrends(){
+  // 默认渲染
+  renderTrendsFor('foreign',  'gt-foreign',  'now 7-d');
+  renderTrendsFor('domestic', 'gt-domestic', 'now 7-d');
+  renderTrendsFor('vendors',  'gt-vendors',  'now 7-d');
+  renderTrendsFor('market',   'gt-market',   'now 7-d');
 
-    const defaultTime = 'now 7-d';
-    renderOne(cfg.foreign,  defaultTime);
-    renderOne(cfg.domestic, defaultTime);
-    renderOne(cfg.vendors,  defaultTime);
-    renderOne(cfg.market,   defaultTime);
-
-    // 时间范围切换
-    document.querySelectorAll('.t-sel').forEach(sel=>{
-      sel.addEventListener('change', ()=>{
-        const time = sel.value || 'now 7-d';
-        const targetId = sel.dataset.target;
-        const key = targetId.replace(/^gt-/, '');
-        const conf = cfg[key];
-        if (conf) renderOne(conf, time);
-      });
+  // 时间范围下拉：这里只是 UI；真正的时间窗请在 n8n 侧生成对应 JSON，再在这里按需切换不同文件
+  document.querySelectorAll('.t-sel').forEach(sel=>{
+    sel.addEventListener('change', ()=>{
+      const targetId = sel.dataset.target;          // 例如 'gt-foreign'
+      const key = targetId.replace(/^gt-/, '');      // 'foreign'
+      // 如果你将来产出多套时间窗 JSON，可在这里根据 sel.value 选择不同文件名
+      // 例如：'foreign-7d.json' / 'foreign-3m.json' / 'foreign-12m.json'
+      renderTrendsFor(key, targetId, sel.value || 'now 7-d');
     });
-  }
+  });
+}
 
-  const s = document.createElement('script');
-  s.src = SCRIPT; s.async = true; s.onload = boot;
-  document.head.appendChild(s);
-
-  // 兜底：5s 后若仍未加载，显示提示
-  setTimeout(() => {
-    if (!(window.trends && window.trends.embed)) {
-      document.querySelectorAll('.t-fallback').forEach(el=>{
-        el.style.display = 'flex';
-        el.textContent = '无法加载 Google 趋势（可能被墙/被拦截）';
-      });
-    }
-  }, 5000);
-})();
+document.addEventListener('DOMContentLoaded', bootTrends);
 </script>
